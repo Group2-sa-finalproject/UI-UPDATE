@@ -1,0 +1,1437 @@
+
+/* =========================================
+   ECOTRACK LOGIN PAGE
+   ========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    min-height: 100%;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+    color: #123c2b;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: 52.5% 47.5%;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* =========================================
+   LEFT BRAND PANEL
+   ========================================= */
+
+.brand-panel {
+    position: relative;
+    min-height: 100vh;
+    padding: 48px 10.5% 25px;
+    background:
+        linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px),
+        linear-gradient(145deg, #145c35, #064b2b 75%, #064127);
+
+    background-size: 36px 36px, 36px 36px, cover;
+    color: white;
+    overflow: hidden;
+}
+
+/* Decorative background circle */
+
+.brand-panel::before {
+    content: "";
+    position: absolute;
+    width: 580px;
+    height: 580px;
+    border: 75px solid rgba(255,255,255,0.035);
+    border-radius: 50%;
+    right: -140px;
+    bottom: -230px;
+    pointer-events: none;
+}
+
+.brand-panel::after {
+    content: "";
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: rgba(255,255,255,0.018);
+    border-radius: 50%;
+    top: 260px;
+    right: -120px;
+    pointer-events: none;
+}
+
+/* Brand logo */
+
+.brand-top {
+    display: none;
+}
+
+.logo-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: #d9fbe5;
+    color: #126238;
+    border-radius: 12px;
+}
+
+.logo-text {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+/* =========================================
+   BRAND CONTENT
+   ========================================= */
+
+.brand-body {
+    position: relative;
+    z-index: 2;
+    max-width: 570px;
+    margin: 0 auto;
+    padding-top: 0;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 15px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 30px;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 24px;
+}
+
+.brand-body h1 {
+    font-size: clamp(44px, 5vw, 64px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2.5px;
+    color: #06472a;
+    margin-bottom: 22px;
+}
+
+.brand-body h1 span {
+    display: block;
+    color: #42dc83;
+}
+
+.brand-body h2 {
+    font-size: 17px;
+    line-height: 1.55;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 14px;
+}
+
+.brand-body p {
+    font-size: 12.5px;
+    line-height: 1.75;
+    color: #e1f5e8;
+    max-width: 480px;
+}
+
+/* =========================================
+   IMAGE SHOWCASE
+   ========================================= */
+
+.showcase {
+    position: relative;
+    margin-top: 44px;
+    width: 100%;
+    max-width: 445px;
+}
+
+.showcase-photo {
+    width: 100%;
+    height: 195px;
+    border: 4px solid rgba(255,255,255,0.17);
+    border-radius: 20px;
+    overflow: hidden;
+    background: #174c32;
+}
+
+.showcase-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* 98% badge */
+
+.stat-badge {
+    position: absolute;
+    z-index: 3;
+    top: -22px;
+    left: -14px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 13px;
+    min-width: 83px;
+
+    background: #11683b;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 14px;
+
+    color: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+.stat-icon {
+    font-size: 20px;
+}
+
+.stat-badge strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.stat-badge small {
+    display: block;
+    font-size: 9px;
+}
+
+/* Collection progress card */
+
+.progress-card {
+    position: absolute;
+    z-index: 4;
+    right: -95px;
+    bottom: 5px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    min-width: 208px;
+    padding: 12px;
+
+    background: #ffffff;
+    border-radius: 13px;
+    color: #17432d;
+
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.pc-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: #dcfce7;
+    border-radius: 9px;
+    font-size: 17px;
+}
+
+.progress-card strong {
+    display: block;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.progress-card small {
+    display: block;
+    font-size: 9px;
+    color: #8a9db2;
+    margin-top: 3px;
+}
+
+.pc-dot {
+    width: 10px;
+    height: 10px;
+    margin-left: auto;
+    flex-shrink: 0;
+    background: #22c55e;
+    border: 3px solid #c9f7da;
+    border-radius: 50%;
+}
+
+/* Brand footer */
+
+.brand-footer {
+    position: absolute;
+    z-index: 2;
+    bottom: 24px;
+    left: 10.5%;
+    font-size: 10px !important;
+    font-weight: 700;
+    color: #d5f7df !important;
+}
+
+/* =========================================
+   RIGHT LOGIN PANEL
+   ========================================= */
+
+.form-panel {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 100vh;
+    padding: 50px 12% 75px;
+
+    background: linear-gradient(
+        145deg,
+        #ffffff 55%,
+        #f3fbf6 100%
+    );
+}
+
+.form-wrap {
+    width: 100%;
+    max-width: 395px;
+}
+
+/* Login icon */
+
+.form-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    margin: 0 auto 27px;
+
+    background: #dcfce7;
+    color: #116b3a;
+    border-radius: 14px;
+}
+
+/* Login heading */
+
+.form-wrap h3 {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    text-align: center;
+    color: #07552f;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 49px;
+}
+
+/* =========================================
+   FORM FIELDS
+   ========================================= */
+
+.form-wrap form > label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #164b32;
+    margin-bottom: 9px;
+}
+
+.field {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    height: 46px;
+
+    border: 1px solid #dce5ef;
+    border-radius: 12px;
+    background: #ffffff;
+
+    margin-bottom: 22px;
+
+    transition: 0.25s ease;
+}
+
+.field:focus-within {
+    border-color: #16834c;
+    box-shadow: 0 0 0 3px rgba(22,131,76,0.09);
+}
+
+.field .f-icon {
+    position: absolute;
+    left: 14px;
+    color: #647b9b;
+    pointer-events: none;
+}
+
+.field input {
+    width: 100%;
+    height: 100%;
+
+    padding: 0 45px 0 40px;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: #1e293b;
+}
+
+.field input::placeholder {
+    color: #91a0b9;
+}
+
+/* Password visibility button */
+
+.toggle {
+    position: absolute;
+    right: 12px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 3px;
+    border: none;
+    background: transparent;
+    color: #647b9b;
+    cursor: pointer;
+}
+
+.toggle:hover {
+    color: #126c3b;
+}
+
+/* =========================================
+   REMEMBER ME AND FORGOT PASSWORD
+   ========================================= */
+
+.row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: -3px 0 25px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 10px;
+    color: #64748b;
+    cursor: pointer;
+}
+
+.remember input {
+    width: 13px;
+    height: 13px;
+    accent-color: #166534;
+    cursor: pointer;
+}
+
+.forgot {
+    font-size: 10px;
+    font-weight: 700;
+    color: #07552f;
+    text-decoration: none;
+}
+
+.forgot:hover {
+    text-decoration: underline;
+}
+
+/* =========================================
+   SIGN IN BUTTON
+   ========================================= */
+
+.btn-signin {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    width: 100%;
+    height: 46px;
+
+    border: none;
+    border-radius: 11px;
+
+    background: #126738;
+    color: #ffffff;
+
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow: 0 8px 18px rgba(18,103,56,0.20);
+    transition: all 0.25s ease;
+}
+
+.btn-signin:hover {
+    background: #0b542d;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(18,103,56,0.25);
+}
+
+.btn-signin span {
+    font-size: 16px;
+}
+
+/* =========================================
+   REGISTER
+   ========================================= */
+
+.register {
+    text-align: center;
+    margin-top: 23px;
+    font-size: 11px;
+    color: #64748b;
+}
+
+.register a {
+    color: #07552f;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.register a:hover {
+    text-decoration: underline;
+}
+
+/* Divider */
+
+.divider {
+    width: 100%;
+    height: 1px;
+    background: #dce5ed;
+    margin: 28px 0 22px;
+}
+
+/* Role information */
+
+.role-note {
+    text-align: center;
+    font-size: 9px;
+    color: #94a3b8;
+}
+
+/* =========================================
+   ALERT MESSAGES
+   ========================================= */
+
+.alert {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.alert-success {
+    background: #d1e7dd;
+    color: #0f5132;
+    border: 1px solid #badbcc;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    color: #842029;
+    border: 1px solid #f5c2c7;
+}
+
+/* =========================================
+   COPYRIGHT
+   ========================================= */
+
+.copyright {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+
+    text-align: center;
+    font-size: 10px;
+    color: #94a3b8;
+}
+
+.copyright span {
+    color: #126738;
+    font-weight: 800;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+
+@media (max-width: 1000px) {
+
+    .split {
+        grid-template-columns: 50% 50%;
+    }
+
+    .brand-panel {
+        padding-left: 8%;
+        padding-right: 8%;
+    }
+
+    .form-panel {
+        padding-left: 8%;
+        padding-right: 8%;
+    }
+
+    .progress-card {
+        right: -35px;
+    }
+
+    .brand-body h1 {
+        font-size: 46px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .split {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .brand-panel {
+        min-height: auto;
+        padding: 35px 25px 55px;
+    }
+
+    .brand-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 35px;
+    }
+
+    .brand-body {
+        padding-top: 0;
+    }
+
+    .brand-body h1 {
+        font-size: 46px;
+    }
+
+    .showcase {
+        margin-top: 35px;
+        max-width: 100%;
+    }
+
+    .showcase-photo {
+        height: 220px;
+    }
+
+    .progress-card {
+        right: 5px;
+        bottom: 10px;
+    }
+
+    .brand-footer {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 35px;
+    }
+
+    .form-panel {
+        min-height: 650px;
+        padding: 55px 25px 85px;
+    }
+
+    .form-wrap {
+        max-width: 420px;
+    }
+
+    .copyright {
+        bottom: 20px;
+    }
+}
+
+@media (max-width: 420px) {
+
+    .brand-body h1 {
+        font-size: 39px;
+    }
+
+    .brand-body h2 {
+        font-size: 15px;
+    }
+
+    .showcase-photo {
+        height: 180px;
+    }
+
+    .progress-card {
+        min-width: 185px;
+        padding: 9px;
+    }
+
+    .form-wrap h3 {
+        font-size: 28px;
+    }
+
+    .row {
+        gap: 5px;
+    }
+}
+
+
+/* ==========================================
+   ECOTRACK LANDING PAGE
+   ========================================== */
+
+/* GLOBAL RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #123f2a;
+    background: #ffffff;
+    overflow-x: hidden;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    width: 100%;
+    max-width: 970px;
+    margin: 0 auto;
+}
+
+/* ==========================================
+   NAVIGATION BAR
+   ========================================== */
+
+.navbar {
+    width: 100%;
+    height: 60px;
+    background: #ffffff;
+    border-bottom: 1px solid #e8f0eb;
+    position: relative;
+    z-index: 100;
+}
+
+.nav-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-shrink: 0;
+}
+
+.brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 33px;
+    height: 33px;
+    background: #145c36;
+    color: #ffffff;
+    border-radius: 10px;
+}
+
+.brand-name {
+    font-size: 17px;
+    font-weight: 800;
+    color: #155a35;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.nav-links a {
+    font-size: 12px;
+    font-weight: 500;
+    color: #35445b;
+    transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+    color: #168348;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-shrink: 0;
+}
+
+.login-link {
+    font-size: 12px;
+    font-weight: 700;
+    color: #145b35;
+}
+
+.login-link:hover {
+    color: #25a45c;
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+
+    transition: all 0.25s ease;
+}
+
+.btn-primary {
+    background: #145b35;
+    color: #ffffff;
+    padding: 12px 18px;
+    box-shadow: 0 5px 13px rgba(12, 78, 42, 0.16);
+}
+
+.btn-primary:hover {
+    background: #0d4628;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(12, 78, 42, 0.23);
+}
+
+.btn-outline {
+    background: #ffffff;
+    color: #145b35;
+    border: 1px solid #cce5d5;
+    padding: 14px 22px;
+}
+
+.btn-outline:hover {
+    background: #eaf8ef;
+    border-color: #168348;
+}
+
+.btn-lg {
+    min-height: 47px;
+    padding-left: 21px;
+    padding-right: 21px;
+}
+
+.arrow {
+    font-size: 16px;
+}
+
+/* ==========================================
+   HERO SECTION
+   ========================================== */
+
+.hero {
+    position: relative;
+    min-height: 580px;
+    padding: 35px 0 45px;
+    overflow: hidden;
+
+    background-color: #f9fdfb;
+
+    background-image:
+        linear-gradient(rgba(22, 104, 57, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22, 104, 57, 0.055) 1px, transparent 1px);
+
+    background-size: 32px 32px;
+}
+
+/* Decorative circles */
+
+.hero-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.hero-circle-right {
+    width: 415px;
+    height: 415px;
+    background: rgba(87, 232, 143, 0.17);
+    right: -140px;
+    top: -65px;
+}
+
+.hero-circle-left {
+    width: 145px;
+    height: 145px;
+    border: 18px solid rgba(87, 232, 143, 0.20);
+    left: -55px;
+    bottom: 12px;
+}
+
+/* ==========================================
+   HERO GRID
+   ========================================== */
+
+.hero-grid {
+    position: relative;
+    z-index: 2;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 35px;
+}
+
+/* ==========================================
+   LEFT HERO CONTENT
+   ========================================== */
+
+.hero-copy {
+    width: 100%;
+    max-width: 480px;
+}
+
+/* Small pill */
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 7px 12px;
+    margin-bottom: 24px;
+
+    border: 1px solid #d5eade;
+    border-radius: 30px;
+
+    background: #ffffff;
+    color: #155b36;
+
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.035);
+}
+
+.pill-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 19px;
+    height: 19px;
+
+    border-radius: 50%;
+    background: #155b36;
+    color: #ffffff;
+}
+
+/* Main heading */
+
+.hero-copy h1 {
+    font-size: clamp(38px, 4vw, 53px);
+    line-height: 1.08;
+    letter-spacing: -2.2px;
+
+    font-weight: 800;
+    color: #104b2d;
+
+    margin-bottom: 22px;
+}
+
+.hero-copy h1 .accent {
+    color: #168747;
+}
+
+/* Description */
+
+.lead {
+    max-width: 470px;
+
+    color: #53677f;
+    font-size: 14px;
+    line-height: 1.85;
+
+    margin-bottom: 27px;
+}
+
+/* ==========================================
+   HERO BUTTONS
+   ========================================== */
+
+.cta-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 27px;
+}
+
+/* ==========================================
+   CHECK LIST
+   ========================================== */
+
+.checks {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 19px;
+
+    list-style: none;
+}
+
+.checks li {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 11px;
+    color: #435b6f;
+}
+
+.check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 16px;
+    height: 16px;
+
+    background: #d8f8e4;
+    color: #168747;
+
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* ==========================================
+   RIGHT HERO VISUAL
+   ========================================== */
+
+.hero-visual {
+    position: relative;
+    width: 100%;
+    max-width: 415px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* Main garbage truck image */
+
+.photo-frame {
+    position: relative;
+    width: 100%;
+    height: 390px;
+
+    padding: 6px;
+
+    background: #ffffff;
+    border: 1px solid #e4eee7;
+    border-radius: 27px;
+
+    box-shadow: 0 20px 40px rgba(23, 69, 43, 0.12);
+
+    overflow: hidden;
+}
+
+.photo-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+    object-position: center;
+
+    border-radius: 21px;
+}
+
+/* ==========================================
+   FLOATING INFORMATION CARDS
+   ========================================== */
+
+.float-card {
+    position: absolute;
+    z-index: 5;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 11px 13px;
+
+    background: #ffffff;
+    border-radius: 13px;
+
+    box-shadow: 0 10px 25px rgba(25, 67, 43, 0.13);
+}
+
+.fc-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 29px;
+    height: 29px;
+
+    flex-shrink: 0;
+
+    border-radius: 9px;
+    background: #dcfce8;
+    color: #12804a;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.float-card strong {
+    display: block;
+    color: #173d2c;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.float-card small {
+    display: block;
+    margin-top: 3px;
+
+    color: #8b9bb0;
+    font-size: 9px;
+    white-space: nowrap;
+}
+
+/* Real-time tracking */
+
+.fc-tracking {
+    top: 70px;
+    left: -33px;
+}
+
+/* Scheduled collection */
+
+.fc-schedule {
+    top: 160px;
+    right: -28px;
+}
+
+/* Cleaner communities */
+
+.fc-communities {
+    bottom: -32px;
+    right: -12px;
+}
+
+/* ==========================================
+   TRUCK STATUS CARD
+   ========================================== */
+
+.truck-status {
+    position: absolute;
+    z-index: 6;
+
+    left: 25px;
+    bottom: 24px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 11px 13px;
+
+    min-width: 210px;
+
+    background: #ffffff;
+    border-radius: 14px;
+
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.truck-icon {
+    position: relative;
+    font-size: 17px;
+}
+
+.live-dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+
+    top: -2px;
+    right: -2px;
+
+    background: #22c55e;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.ts-text {
+    flex: 1;
+}
+
+.ts-text small {
+    display: block;
+    color: #8495a8;
+    font-size: 9px;
+    margin-bottom: 3px;
+}
+
+.ts-text strong {
+    display: block;
+    color: #193e2c;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.ts-live {
+    color: #15934c;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN - TABLETS
+   ========================================== */
+
+@media (max-width: 1050px) {
+
+    .container {
+        max-width: 90%;
+    }
+
+    .nav-links {
+        gap: 15px;
+    }
+
+    .hero-grid {
+        gap: 25px;
+    }
+
+    .hero-copy h1 {
+        font-size: 43px;
+    }
+
+    .photo-frame {
+        height: 350px;
+    }
+
+    .fc-schedule {
+        right: -10px;
+    }
+
+    .fc-communities {
+        right: -5px;
+    }
+}
+
+/* ==========================================
+   RESPONSIVE DESIGN - MOBILE
+   ========================================== */
+
+@media (max-width: 768px) {
+
+    .navbar {
+        height: auto;
+        padding: 14px 0;
+    }
+
+    .nav-inner {
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+
+    .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .nav-actions {
+        margin-left: auto;
+        gap: 12px;
+    }
+
+    .hero {
+        padding: 45px 0 70px;
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 55px;
+    }
+
+    .hero-copy {
+        max-width: 100%;
+    }
+
+    .hero-copy h1 {
+        font-size: clamp(37px, 8vw, 52px);
+    }
+
+    .lead {
+        font-size: 13px;
+    }
+
+    .hero-visual {
+        max-width: 440px;
+        margin: 0 auto;
+    }
+
+    .photo-frame {
+        height: 350px;
+    }
+
+    .fc-tracking {
+        left: -10px;
+    }
+
+    .fc-schedule {
+        right: -8px;
+    }
+
+    .fc-communities {
+        right: 0;
+    }
+}
+
+/* ==========================================
+   SMALL MOBILE DEVICES
+   ========================================== */
+
+@media (max-width: 480px) {
+
+    .container {
+        max-width: 90%;
+    }
+
+    .brand-name {
+        font-size: 16px;
+    }
+
+    .nav-links {
+        gap: 12px;
+    }
+
+    .nav-links a {
+        font-size: 10px;
+    }
+
+    .nav-actions {
+        gap: 10px;
+    }
+
+    .nav-actions .btn {
+        padding: 10px 12px;
+        font-size: 10px;
+    }
+
+    .hero-copy h1 {
+        font-size: 38px;
+        letter-spacing: -1.5px;
+    }
+
+    .hero-copy h1 .accent {
+        display: inline;
+    }
+
+    .cta-row {
+        flex-wrap: wrap;
+    }
+
+    .checks {
+        gap: 12px;
+    }
+
+    .checks li {
+        font-size: 10px;
+    }
+
+    .photo-frame {
+        height: 280px;
+    }
+
+    .float-card {
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .float-card strong {
+        font-size: 8px;
+    }
+
+    .float-card small {
+        font-size: 8px;
+    }
+
+    .fc-tracking {
+        left: -5px;
+        top: 35px;
+    }
+
+    .fc-schedule {
+        right: -5px;
+        top: 125px;
+    }
+
+    .fc-communities {
+        bottom: -30px;
+    }
+
+    .truck-status {
+        left: 10px;
+        bottom: 15px;
+        min-width: 195px;
+        padding: 9px;
+    }
+}
+
