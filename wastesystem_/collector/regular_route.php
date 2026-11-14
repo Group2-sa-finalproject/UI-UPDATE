@@ -99,6 +99,91 @@ $stmt->close();
             margin-bottom: 20px;
         }
 
+        /* Route Cards: One Full-Width Card Per Row */
+        .routes-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .routes-grid .route-card {
+            margin-bottom: 0;
+            width: 100%;
+        }
+
+        /* Household Stops: Two Cards Per Row */
+        .stops-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        /* Stop Card */
+        .stop-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            background: #f8faf9;
+            border: 1px solid #e5eae7;
+            border-radius: 10px;
+            padding: 16px;
+            margin: 0;
+            min-width: 0;
+        }
+
+        .stop-number {
+            min-width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #198754;
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+        }
+
+        .stop-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .stop-name {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .stop-address {
+            font-size: 13px;
+            color: #6c757d;
+            overflow-wrap: anywhere;
+        }
+
+        .stop-status {
+            display: inline-block;
+            background: #e8f5ed;
+            color: #198754;
+            border-radius: 20px;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .stop-meta {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .stops-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+
         #map {
             width: 100%;
             height: 500px;
@@ -146,57 +231,82 @@ $stmt->close();
         }
         ?>
 
-        <?php foreach ($groupedRoutes as $routeId => $stops): ?>
+        <div class="routes-grid">
 
-            <div class="route-card">
+            <?php foreach ($groupedRoutes as $routeId => $stops): ?>
 
-                <h5 class="fw-bold">
-                    <?= htmlspecialchars($stops[0]["route_name"]); ?>
-                </h5>
+                <div class="route-card">
 
-                <p class="text-secondary">
-                    Route Status:
-                    <?= htmlspecialchars($stops[0]["route_status"]); ?>
-                </p>
-                <button
-    type="button"
-    class="btn btn-green btn-sm mb-3"
-    onclick="showRegularRoute(<?= (int) $routeId ?>)">
-    View Driving Route
-</button>
+                <!-- Route Header -->
+                <div class="route-header">
 
-                <h6 class="fw-bold mb-3">Household Stops</h6>
+                    <div>
+                        <h5 class="route-title">
+                            <?= htmlspecialchars($stops[0]["route_name"]); ?>
+                        </h5>
 
-                <?php foreach ($stops as $stop): ?>
-
-                    <div class="stop-item">
-
-                        <h6 class="fw-bold">
-                            Stop <?= (int) $stop["stop_order"]; ?> —
-                            <?= htmlspecialchars($stop["fullname"] ?? "Resident"); ?>
-                        </h6>
-
-                        <p class="mb-1">
-                            <strong>Address:</strong>
-                            <?= htmlspecialchars($stop["house_address"] ?? "No address"); ?>
+                        <p class="route-subtitle">
+                            <?= count($stops); ?> household stop(s) assigned
                         </p>
-
-                        <p class="mb-1">
-                            <strong>Collection Status:</strong>
-                            <?= htmlspecialchars($stop["stop_status"]); ?>
-                        </p>
-
-                        <p class="mb-0 text-secondary">
-                            Household ID: <?= (int) $stop["household_id"]; ?>
-                        </p>
-
                     </div>
 
-                <?php endforeach; ?>
+                    <span class="route-status">
+                        <?= htmlspecialchars($stops[0]["route_status"]); ?>
+                    </span>
 
-            </div>
+                </div>
 
-        <?php endforeach; ?>
+                <!-- Driving Route Button -->
+                <button
+                    type="button"
+                    class="btn btn-green mb-4"
+                    onclick="showRegularRoute(<?= (int) $routeId ?>)">
+                    View Driving Route
+                </button>
+
+                <!-- Household Stops -->             
+                <h6 class="stops-heading mb-3">Household Stops</h6>
+
+                <div class="stops-grid">
+
+                    <?php foreach ($stops as $stop): ?>
+
+                        <div class="stop-item">
+
+                            <div class="stop-number">
+                                <?= (int) $stop["stop_order"]; ?>
+                            </div>
+
+                            <div class="stop-details">
+
+                                <h6 class="stop-name">
+                                    <?= htmlspecialchars($stop["fullname"] ?? "Resident"); ?>
+                                </h6>
+
+                                <p class="stop-address mb-2">
+                                    <strong>Address:</strong>
+                                    <?= htmlspecialchars($stop["house_address"] ?? "No address"); ?>
+                                </p>
+
+                                <span class="stop-status">
+                                    <?= htmlspecialchars($stop["stop_status"]); ?>
+                                </span>
+
+                                <div class="stop-meta mt-2">
+                                    Household ID: <?= (int) $stop["household_id"]; ?>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    <?php endforeach; ?>
+
+                </div>
+
+            <?php endforeach; ?>
+
+        </div>
 
     <?php else: ?>
 
@@ -209,63 +319,122 @@ $stmt->close();
     <?php endif; ?>
 
     <div class="route-card">
-        <h5 class="fw-bold mb-3">Route Map</h5>
-        <div id="map"></div>
+    <h5 class="fw-bold mb-3">Route Map</h5>
 
-        <p id="routeStatus" class="text-secondary mt-3 mb-0">
-            Loading route map...
-        </p>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        <button type="button" class="btn btn-green"
+                onclick="showAllStops()">
+            <i class="fas fa-house"></i> Show All Stops
+        </button>
+
+        <button type="button" class="btn btn-primary"
+                onclick="showSelectedRouteStops()">
+            <i class="fas fa-route"></i> Highlight Selected Route
+        </button>
     </div>
+
+    <div id="map"></div>
+    <p id="routeStatus" class="text-secondary mt-3">
+        Loading route map...
+    </p>
 
 </main>
 <script>
-let map;
-let Route;
-let currentPosition = null;
-let routePolylines = [];
 
 const regularStops = <?= json_encode(array_map(function ($stop) {
     return [
         "route_id" => (int) $stop["route_id"],
+        "household_id" => (int) $stop["household_id"],
         "stop_order" => (int) $stop["stop_order"],
         "name" => $stop["fullname"] ?? "Resident",
-        "address" => $stop["house_address"] ?? "",
-        "latitude" => (float) $stop["latitude"],
-        "longitude" => (float) $stop["longitude"]
+        "address" => $stop["house_address"] ?? "No address",
+        "latitude" => is_numeric($stop["latitude"]) ? (float) $stop["latitude"] : null,
+        "longitude" => is_numeric($stop["longitude"]) ? (float) $stop["longitude"] : null
     ];
 }, $routes), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT); ?>;
 
-async function initMap() {
+let map;
+let Route;
+let currentPosition = null;
+let currentLocationMarker = null;
+let routePolylines = [];
+let householdMarkers = [];
+let routeMarkers = [];
+let infoWindow;
+let selectedRouteId = null;
 
+// Prevent invalid or missing GPS coordinates from appearing at 0,0.
+function hasValidCoordinates(stop) {
+    return stop.latitude !== null &&
+           stop.longitude !== null &&
+           Number.isFinite(Number(stop.latitude)) &&
+           Number.isFinite(Number(stop.longitude)) &&
+           Math.abs(Number(stop.latitude)) <= 90 &&
+           Math.abs(Number(stop.longitude)) <= 180;
+}
+
+// Escape values before placing them inside an info window.
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[char]);
+}
+
+function getStopInfo(stop, isRouteStop) {
+    return `
+        <div style="min-width:190px;max-width:260px;padding:5px;">
+            <strong style="font-size:14px;">
+                ${escapeHTML(stop.name)}
+            </strong>
+
+            <hr style="margin:7px 0;">
+
+            <div style="font-size:12px;margin-bottom:5px;">
+                <strong>Address:</strong>
+                ${escapeHTML(stop.address)}
+            </div>
+
+            <div style="font-size:12px;margin-bottom:5px;">
+                <strong>Household ID:</strong>
+                #${escapeHTML(stop.household_id)}
+            </div>
+
+            <div style="font-size:12px;">
+                <strong>Stop Order:</strong>
+                ${escapeHTML(stop.stop_order)}
+            </div>
+
+            ${isRouteStop ? `
+                <div style="color:#1976d2;font-size:11px;font-weight:bold;margin-top:6px;">
+                    Selected Route Stop
+                </div>
+            ` : ""}
+        </div>
+    `;
+}
+
+async function initMap() {
     const routesLibrary = await google.maps.importLibrary("routes");
     Route = routesLibrary.Route;
 
     map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 15.4802, lng: 120.5979 },
-        zoom: 12
+        zoom: 12,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true
     });
 
-    const bounds = new google.maps.LatLngBounds();
+    infoWindow = new google.maps.InfoWindow();
 
-    regularStops.forEach(stop => {
+    createHouseholdMarkers();
 
-        const position = {
-            lat: stop.latitude,
-            lng: stop.longitude
-        };
-
-        new google.maps.Marker({
-            position: position,
-            map: map,
-            title: "Stop " + stop.stop_order + " - " + stop.name
-        });
-
-        bounds.extend(position);
-    });
-
-    if (regularStops.length > 0) {
-        map.fitBounds(bounds);
-    }
+    // Initially display all household stops as green circles.
+    showAllStops();
 
     if (!navigator.geolocation) {
         document.getElementById("routeStatus").textContent =
@@ -274,15 +443,13 @@ async function initMap() {
     }
 
     navigator.geolocation.getCurrentPosition(
-
         function(position) {
-
             currentPosition = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude
             };
 
-            new google.maps.Marker({
+            currentLocationMarker = new google.maps.Marker({
                 position: currentPosition,
                 map: map,
                 title: "Your Current Location",
@@ -291,20 +458,13 @@ async function initMap() {
                 }
             });
 
-            map.setCenter(currentPosition);
-
             document.getElementById("routeStatus").textContent =
-                "GPS ready. Select View Driving Route.";
-
+                "GPS ready. Select a route to view its stops or driving directions.";
         },
-
         function(error) {
-
             document.getElementById("routeStatus").textContent =
                 "Unable to get GPS location: " + error.message;
-
         },
-
         {
             enableHighAccuracy: true,
             timeout: 15000,
@@ -313,22 +473,183 @@ async function initMap() {
     );
 }
 
-async function showRegularRoute(routeId) {
+// Create green circular markers for every household.
+function createHouseholdMarkers() {
+    householdMarkers.forEach(marker => marker.setMap(null));
+    householdMarkers = [];
 
-    const message = document.getElementById("routeStatus");
+    regularStops.forEach(stop => {
+        if (!hasValidCoordinates(stop)) return;
 
-    if (!currentPosition) {
-        message.textContent = "Your current GPS location is not available.";
+        const position = {
+            lat: Number(stop.latitude),
+            lng: Number(stop.longitude)
+        };
+
+        const marker = new google.maps.Marker({
+            position: position,
+            map: null,
+            title: stop.name,
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 8,
+                fillColor: "#198754",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2
+            }
+        });
+
+        marker.addListener("click", () => {
+            infoWindow.setContent(getStopInfo(stop, false));
+            infoWindow.open(map, marker);
+        });
+
+        householdMarkers.push(marker);
+    });
+}
+
+// Create blue numbered markers for a selected route.
+function createRouteMarkers(stops) {
+    routeMarkers.forEach(marker => marker.setMap(null));
+    routeMarkers = [];
+
+    stops.forEach(stop => {
+        if (!hasValidCoordinates(stop)) return;
+
+        const position = {
+            lat: Number(stop.latitude),
+            lng: Number(stop.longitude)
+        };
+
+        const marker = new google.maps.Marker({
+            position: position,
+            map: null,
+            title: `Stop ${stop.stop_order}: ${stop.name}`,
+            label: {
+                text: String(stop.stop_order),
+                color: "#ffffff",
+                fontWeight: "bold",
+                fontSize: "11px"
+            },
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 11,
+                fillColor: "#1976d2",
+                fillOpacity: 1,
+                strokeColor: "#ffffff",
+                strokeWeight: 2
+            }
+        });
+
+        marker.addListener("click", () => {
+            infoWindow.setContent(getStopInfo(stop, true));
+            infoWindow.open(map, marker);
+        });
+
+        routeMarkers.push(marker);
+    });
+}
+
+// Remove any previous driving route line.
+function clearRoutePolylines() {
+    routePolylines.forEach(polyline => polyline.setMap(null));
+    routePolylines = [];
+}
+
+// Fit the map around the visible markers.
+function fitToMarkers(markers) {
+    if (!markers.length) return;
+
+    const bounds = new google.maps.LatLngBounds();
+
+    markers.forEach(marker => {
+        bounds.extend(marker.getPosition());
+    });
+
+    if (markers.length === 1) {
+        map.setCenter(bounds.getCenter());
+        map.setZoom(16);
+    } else {
+        map.fitBounds(bounds);
+    }
+}
+
+// Display all households using green circular markers.
+function showAllStops() {
+    selectedRouteId = null;
+
+    clearRoutePolylines();
+
+    routeMarkers.forEach(marker => marker.setMap(null));
+    householdMarkers.forEach(marker => marker.setMap(map));
+
+    infoWindow.close();
+
+    fitToMarkers(householdMarkers);
+
+    document.getElementById("routeStatus").textContent =
+        `${householdMarkers.length} household stop(s) displayed using green markers.`;
+}
+
+// Display only the selected route using blue numbered markers.
+function showSelectedRouteStops(routeId = selectedRouteId) {
+    if (!routeId) {
+        document.getElementById("routeStatus").textContent =
+            "Please select a route first using its View Driving Route button.";
         return;
     }
 
-    // Get only the stops belonging to the selected route
+    selectedRouteId = Number(routeId);
+
+    const stops = regularStops
+        .filter(stop => stop.route_id === selectedRouteId)
+        .sort((a, b) => a.stop_order - b.stop_order)
+        .filter(hasValidCoordinates);
+
+    if (!stops.length) {
+        document.getElementById("routeStatus").textContent =
+            "No household stops with valid GPS coordinates were found for this route.";
+        return;
+    }
+
+    clearRoutePolylines();
+
+    householdMarkers.forEach(marker => marker.setMap(null));
+
+    createRouteMarkers(stops);
+
+    routeMarkers.forEach(marker => marker.setMap(map));
+
+    infoWindow.close();
+
+    fitToMarkers(routeMarkers);
+
+    document.getElementById("routeStatus").textContent =
+        `Route ${selectedRouteId}: ${routeMarkers.length} numbered household stop(s) displayed.`;
+}
+
+// Calculate and display the selected route from the collector's GPS location.
+async function showRegularRoute(routeId) {
+    const message = document.getElementById("routeStatus");
+
     const stops = regularStops
         .filter(stop => stop.route_id === Number(routeId))
-        .sort((a, b) => a.stop_order - b.stop_order);
+        .sort((a, b) => a.stop_order - b.stop_order)
+        .filter(hasValidCoordinates);
 
-    if (stops.length === 0) {
-        message.textContent = "No household stops found for this route.";
+    if (!stops.length) {
+        message.textContent =
+            "No household stops with valid GPS coordinates were found for this route.";
+        return;
+    }
+
+    // Display the selected route's blue numbered markers first.
+    showSelectedRouteStops(Number(routeId));
+
+    if (!currentPosition) {
+        message.textContent =
+            "Route stops are displayed, but your current GPS location is unavailable. Allow location access to calculate driving directions.";
         return;
     }
 
@@ -340,14 +661,14 @@ async function showRegularRoute(routeId) {
         origin: currentPosition,
 
         destination: {
-            lat: destinationStop.latitude,
-            lng: destinationStop.longitude
+            lat: Number(destinationStop.latitude),
+            lng: Number(destinationStop.longitude)
         },
 
         intermediates: stops.slice(0, -1).map(stop => ({
             location: {
-                lat: stop.latitude,
-                lng: stop.longitude
+                lat: Number(stop.latitude),
+                lng: Number(stop.longitude)
             }
         })),
 
@@ -357,7 +678,6 @@ async function showRegularRoute(routeId) {
     };
 
     try {
-
         const { routes } = await Route.computeRoutes(request);
 
         if (!routes || routes.length === 0) {
@@ -365,9 +685,7 @@ async function showRegularRoute(routeId) {
             return;
         }
 
-        // Remove the previous route line
-        routePolylines.forEach(polyline => polyline.setMap(null));
-        routePolylines = [];
+        clearRoutePolylines();
 
         const polylines = routes[0].createPolylines();
 
@@ -376,17 +694,25 @@ async function showRegularRoute(routeId) {
             routePolylines.push(polyline);
         });
 
+        // Keep the blue numbered household markers visible.
+        routeMarkers.forEach(marker => marker.setMap(map));
+
+        if (currentLocationMarker) {
+            currentLocationMarker.setMap(map);
+        }
+
         message.textContent =
-            "Regular driving route displayed successfully!";
+            "Driving route displayed successfully with numbered household stops.";
 
     } catch (error) {
-
-        message.textContent = "Route error: " + error.message;
         console.error("Regular Routes API error:", error);
 
+        message.textContent =
+            "Route error: " + (error.message || "Unable to calculate the driving route.");
     }
-}
+} 
 </script>
+
 <script async
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz8mz80N6FN03Q1q1nQFGeZLduXsZpNHY&loading=async&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&loading=async&callback=initMap">
 </script>
