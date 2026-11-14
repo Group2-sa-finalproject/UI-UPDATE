@@ -127,8 +127,60 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         .form-control:focus,.form-select:focus{border-color:#238653;box-shadow:0 0 0 3px rgba(35,134,83,.1)}
         .account-meta{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
         .meta-pill{background:#edf5ef;color:#237449;border-radius:30px;padding:7px 12px;font-size:12px;font-weight:600}
-        .form-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:25px}
-        .btn-success{background:#238653;border-color:#238653}.btn-success:hover{background:#176b40;border-color:#176b40}
+        .form-actions{
+    display:flex;
+    gap:14px;
+    justify-content:flex-end;
+    flex-wrap:wrap;
+    margin-top:30px;
+}
+
+.form-actions .btn{
+    min-width:150px;
+    min-height:48px;
+    padding:12px 22px;
+    font-size:15px;
+    font-weight:600;
+    border-radius:9px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    transition:all .2s ease;
+}
+
+.form-actions .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 4px 10px rgba(0,0,0,.10);
+}
+        .form-actions .btn{
+    font-size:12px;
+    padding:6px 10px;
+    border-radius:7px;
+    font-weight:600;
+    transition:all .2s ease;
+}
+
+.form-actions .btn-outline-success{
+    color:#238653;
+    border:1px solid #238653;
+    background:transparent;
+}
+
+.form-actions .btn-outline-success:hover{
+    background:#238653;
+    color:#fff;
+}
+
+.form-actions .btn-outline-secondary{
+    color:#6c757d;
+    border:1px solid #6c757d;
+    background:transparent;
+}
+
+.form-actions .btn-outline-secondary:hover{
+    background:#6c757d;
+    color:#fff;
+} 
         @media(max-width:576px){.topbar{padding:13px 16px}.card-heading,.card-body{padding:20px}.form-actions>*{width:100%}}
     </style>
 </head>
