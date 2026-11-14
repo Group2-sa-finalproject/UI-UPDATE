@@ -632,20 +632,27 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data="
 
         }
 
+        
         /* =========================================
-           PRINT DESIGN
+        PRINT DESIGN - ONE A4 PAGE ONLY
         ========================================= */
 
         @media print {
 
             @page {
-                size: A4;
-                margin: 15mm;
+                size: A4 portrait;
+                margin: 10mm;
             }
 
+            html,
             body {
+                width: 100%;
+                height: auto;
+                margin: 0 !important;
+                padding: 0 !important;
                 background: #fff !important;
                 color: #000 !important;
+                overflow: hidden !important;
             }
 
             .sidebar,
@@ -659,56 +666,109 @@ $qr_url = "https://api.qrserver.com/v1/create-qr-code/?size=400x400&data="
 
             .main-content {
                 margin: 0 !important;
+                padding: 0 !important;
                 width: 100% !important;
                 min-height: auto !important;
             }
 
             .content {
-                padding: 0 !important;
+                width: 100% !important;
                 margin: 0 !important;
+                padding: 0 !important;
             }
 
             .qr-main-card {
-                border: none !important;
-                box-shadow: none !important;
-                padding: 10px !important;
+                width: 100% !important;
                 margin: 0 !important;
+                padding: 10mm !important;
+                border: 1px solid #ccc !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
             }
 
             .qr-layout {
                 display: flex !important;
                 flex-direction: column !important;
-                gap: 20px !important;
+                align-items: center !important;
+                gap: 12mm !important;
             }
 
             .qr-information {
-                text-align: center;
+                width: 100% !important;
+                padding: 0 !important;
+                text-align: center !important;
+            }
+
+            .qr-information h4 {
+                font-size: 20pt !important;
+                margin-bottom: 8px !important;
+            }
+
+            .qr-information > p {
+                font-size: 10pt !important;
+                margin-bottom: 15px !important;
+            }
+
+            .resident-details {
+                width: 100% !important;
+                padding: 15px !important;
+                background: #fff !important;
+                border: 1px solid #ccc !important;
+            }
+
+            .detail-label {
+                font-size: 8pt !important;
+            }
+
+            .detail-value {
+                font-size: 11pt !important;
+            }
+
+            .resident-detail-divider {
+                margin: 9px 0 !important;
             }
 
             .qr-display-area {
+                width: 100% !important;
+                padding: 0 !important;
                 background: #fff !important;
                 border: none !important;
             }
 
+            .qr-display-area h5 {
+                font-size: 15pt !important;
+            }
+
+            .qr-display-area p {
+                font-size: 9pt !important;
+                margin-bottom: 10px !important;
+            }
+
             .qr-image-wrapper {
-                box-shadow: none !important;
+                padding: 10px !important;
+                background: #fff !important;
                 border: 1px solid #ccc !important;
+                box-shadow: none !important;
             }
 
             .qr-image {
-                width: 300px !important;
-            }
-
-            .resident-details {
-                background: #fff !important;
+                width: 220px !important;
+                height: 220px !important;
+                max-width: none !important;
+                object-fit: contain !important;
             }
 
             .resident-code {
+                font-size: 11pt !important;
+                margin-top: 12px !important;
+                padding: 8px 15px !important;
                 color: #000 !important;
                 background: #eee !important;
             }
-
         }
+
 
     </style>
 
