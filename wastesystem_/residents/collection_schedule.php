@@ -14,6 +14,11 @@ if (
 
 $user_id = (int) $_SESSION["user_id"];
 
+// CSRF protection for collection request cancellation
+if (empty($_SESSION["schedule_csrf"])) {
+    $_SESSION["schedule_csrf"] = bin2hex(random_bytes(32));
+}
+
 // Resident name for the shared dashboard topbar.
 $resident_name = 'Resident';
 $profile_stmt = mysqli_prepare($conn, "SELECT fullname FROM users WHERE id = ? AND role = 'residents' LIMIT 1");
@@ -31,6 +36,73 @@ if ($profile_stmt) {
 
 $message = "";
 $message_type = "";
+
+if (isset($_SESSION["schedule_message"])) {
+    $message = $_SESSION["schedule_message"];
+    $message_type = "success";
+    unset($_SESSION["schedule_message"]);
+}
+
+// Permanently delete a pending collection request
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["cancel_request"])) {
+
+    $request_id = (int) ($_POST["request_id"] ?? 0);
+    $csrf_token = $_POST["csrf_token"] ?? "";
+
+    if (
+        !is_string($csrf_token) ||
+        !hash_equals($_SESSION["schedule_csrf"], $csrf_token)
+    ) {
+        $message = "Invalid request. Please refresh the page and try again.";
+        $message_type = "error";
+
+    } elseif ($request_id <= 0) {
+
+        $message = "Invalid collection request.";
+        $message_type = "error";
+
+    } else {
+
+        $delete_stmt = mysqli_prepare(
+            $conn,
+            "DELETE FROM collection_schedules
+             WHERE id = ?
+             AND user_id = ?
+             AND LOWER(TRIM(status)) = 'pending'"
+        );
+
+        if (!$delete_stmt) {
+            die("Delete preparation failed: " . mysqli_error($conn));
+        }
+
+        mysqli_stmt_bind_param(
+            $delete_stmt,
+            "ii",
+            $request_id,
+            $user_id
+        );
+
+        if (!mysqli_stmt_execute($delete_stmt)) {
+
+            die("Delete execution failed: " . mysqli_stmt_error($delete_stmt));
+
+        } elseif (mysqli_stmt_affected_rows($delete_stmt) > 0) {
+
+            $_SESSION["schedule_message"] = "Collection request successfully deleted.";
+
+            header("Location: collection_schedule.php?month=" . urlencode($month));
+            exit;
+
+        } else {
+
+            $message = "No record was deleted. Please check the request ID, resident ID, and request status.";
+            $message_type = "error";
+        }
+
+        mysqli_stmt_close($delete_stmt);
+    }
+}
+
 
 // Get selected month
 $month = $_GET["month"] ?? date("Y-m");
@@ -1104,6 +1176,7 @@ a {
                             <th>Address</th>
                             <th>Notes</th>
                             <th>Status</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
 
@@ -1140,6 +1213,39 @@ a {
                                             <?= h($row["status"]) ?>
                                         </span>
                                     </td>
+
+                                    <td>
+                                        <?php if (strtolower(trim($row["status"])) === "pending"): ?>
+
+                                            <form method="POST" class="cancel-request-form">
+                                                <input
+                                                    type="hidden"
+                                                    name="csrf_token"
+                                                    value="<?= h($_SESSION["schedule_csrf"]) ?>"
+                                                >
+
+                                                <input
+                                                    type="hidden"
+                                                    name="request_id"
+                                                    value="<?= (int)$row["id"] ?>"
+                                                >
+
+                                                <button
+                                                    type="submit"
+                                                    name="cancel_request"
+                                                    value="1"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                    <i class="fas fa-times-circle me-1"></i>
+                                                    Cancel Request
+                                                </button>
+                                            </form>
+
+                                        <?php else: ?>
+
+                                            <span class="text-muted small">No action available</span>
+
+                                        <?php endif; ?>
+                                    </td>
                                 </tr>
 
                             <?php endwhile; ?>
@@ -1147,7 +1253,7 @@ a {
                         <?php else: ?>
 
                             <tr>
-                                <td colspan="5" class="text-center">
+                                <td colspan="6" class="text-center">
                                     You have no collection requests yet.
                                 </td>
                             </tr>
@@ -1186,7 +1292,43 @@ function selectDate(date) {
 }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".cancel-request-form").forEach(function(form) {
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Cancel Collection Request?",
+                text: "Are you sure you want to cancel this collection request? This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, Cancel Request",
+                cancelButtonText: "Keep Request",
+                reverseButtons: true
+            }).then(function(result) {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+});
+</script>
 
 </body>
 </html>
