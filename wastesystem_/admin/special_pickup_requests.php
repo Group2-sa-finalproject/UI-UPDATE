@@ -469,108 +469,88 @@ $requests_result = $conn->query("
 
 
                             <!-- ADMIN ACTION -->
-
                             <td>
-
                                 <div class="actions">
-
 
                                     <?php if ($status === "pending"): ?>
 
-
                                         <!-- ACCEPT -->
-
                                         <form method="POST"
                                             action="dashboard.php?page=special_pickup_requests"
-                                            onsubmit="return confirm('Accept this request?');">
+                                            class="pickup-action-form"
+                                            data-title="Accept this request?"
+                                            data-text="Are you sure you want to approve this pickup request?"
+                                            data-icon="question"
+                                            data-confirm="Yes, accept">
 
-                                            <input type="hidden"
-                                                name="csrf_token"
+                                            <input type="hidden" name="csrf_token"
                                                 value="<?= htmlspecialchars($_SESSION["csrf_token"]) ?>">
 
-                                            <input type="hidden"
-                                                name="request_id"
+                                            <input type="hidden" name="request_id"
                                                 value="<?= (int)$row["id"] ?>">
 
-                                            <button type="submit"
-                                                name="decision"
-                                                value="approved"
-                                                class="accept">
-
+                                            <button type="submit" name="decision"
+                                                value="approved" class="accept">
                                                 Accept
-
                                             </button>
-
                                         </form>
-
 
                                         <!-- DENY -->
-
                                         <form method="POST"
                                             action="dashboard.php?page=special_pickup_requests"
-                                            onsubmit="return confirm('Deny this request?');">
+                                            class="pickup-action-form"
+                                            data-title="Deny this request?"
+                                            data-text="Are you sure you want to reject this pickup request?"
+                                            data-icon="warning"
+                                            data-confirm="Yes, deny">
 
-                                            <input type="hidden"
-                                                name="csrf_token"
+                                            <input type="hidden" name="csrf_token"
                                                 value="<?= htmlspecialchars($_SESSION["csrf_token"]) ?>">
 
-                                            <input type="hidden"
-                                                name="request_id"
+                                            <input type="hidden" name="request_id"
                                                 value="<?= (int)$row["id"] ?>">
 
-                                            <button type="submit"
-                                                name="decision"
-                                                value="rejected"
-                                                class="deny">
-
+                                            <button type="submit" name="decision"
+                                                value="rejected" class="deny">
                                                 Deny
-
                                             </button>
-
                                         </form>
-
 
                                     <?php else: ?>
 
-
                                         <span class="reviewed">
-
                                             Already Reviewed
-
                                         </span>
 
+                                        <!-- DELETE: ONLY APPROVED OR REJECTED -->
+                                        <?php if (in_array($status, ["approved", "rejected"], true)): ?>
+
+                                            <form method="POST"
+                                                action="dashboard.php?page=special_pickup_requests"
+                                                class="pickup-action-form"
+                                                data-title="Delete this request?"
+                                                data-text="This pickup request will be permanently deleted. This action cannot be undone."
+                                                data-icon="warning"
+                                                data-confirm="Yes, delete it"
+                                                data-confirm-color="#dc3545">
+
+                                                <input type="hidden" name="csrf_token"
+                                                    value="<?= htmlspecialchars($_SESSION["csrf_token"]) ?>">
+
+                                                <input type="hidden" name="request_id"
+                                                    value="<?= (int)$row["id"] ?>">
+
+                                                <button type="submit" name="delete_request"
+                                                    value="1" class="delete">
+                                                    Delete
+                                                </button>
+                                            </form>
+
+                                        <?php endif; ?>
 
                                     <?php endif; ?>
 
-
-                                    <!-- DELETE -->
-
-                                    <form method="POST"
-                                        action="dashboard.php?page=special_pickup_requests"
-                                        onsubmit="return confirm('Are you sure you want to permanently delete this pickup request?');">
-
-                                        <input type="hidden"
-                                            name="csrf_token"
-                                            value="<?= htmlspecialchars($_SESSION["csrf_token"]) ?>">
-
-                                        <input type="hidden"
-                                            name="request_id"
-                                            value="<?= (int)$row["id"] ?>">
-
-                                        <button type="submit"
-                                            name="delete_request"
-                                            value="1"
-                                            class="delete">
-
-                                            Delete
-
-                                        </button>
-
-                                    </form>
-
-
                                 </div>
-
                             </td>
 
                         </tr>
@@ -604,3 +584,44 @@ $requests_result = $conn->query("
     </div>
 
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".pickup-action-form").forEach(function (form) {
+
+        form.addEventListener("submit", function (event) {
+
+            event.preventDefault();
+
+            const title = form.dataset.title;
+            const message = form.dataset.text;
+            const icon = form.dataset.icon;
+            const confirmText = form.dataset.confirm;
+            const confirmColor = form.dataset.confirmColor || "#198754";
+
+            Swal.fire({
+                title: title,
+                text: message,
+                icon: icon,
+                showCancelButton: true,
+                confirmButtonColor: confirmColor,
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: confirmText,
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then(function (result) {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+});
+</script>
