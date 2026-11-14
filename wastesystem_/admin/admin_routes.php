@@ -575,14 +575,22 @@ function showAllHouseholds() {
     document.getElementById('routeMessage').textContent = `${householdMarkers.length} registered household location(s) displayed.`;
 }
 
+
 function showLatestRouteStops() {
+    // Hide all household markers first
     householdMarkers.forEach(marker => marker.setMap(null));
+
+    // Display only stops belonging to the latest generated route
     routeMarkers.forEach(marker => marker.setMap(map));
+
     fitToMarkers(routeMarkers);
-    document.getElementById('routeMessage').textContent = routeMarkers.length
-        ? `${routeMarkers.length} stop(s) from the latest regular route displayed.`
-        : 'No stops are available in the latest regular route.';
+
+    document.getElementById('routeMessage').textContent =
+        routeMarkers.length
+        ? `${routeMarkers.length} household(s) belonging to the latest generated group route displayed.`
+        : 'No stops are available in the latest generated route.';
 }
+
 
 function startRouteFromMyLocation() {
     const message = document.getElementById('routeMessage');
