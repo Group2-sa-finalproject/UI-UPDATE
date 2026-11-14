@@ -660,4 +660,3 @@ function filterRegistered() {
 }
 </script>
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz8mz80N6FN03Q1q1nQFGeZLduXsZpNHY&callback=initMap"></script>
-
