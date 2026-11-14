@@ -255,23 +255,86 @@ a{text-decoration:none}
     <div class="dashboard-footer">© <?= date('Y') ?> EcoTrack Waste Collection Management System<br>Resident Dashboard</div>
   </main>
 </div>
+
 <script>
-const pointsInput = document.getElementById('points_to_redeem');
-if (pointsInput) {
-  const discountPreview = document.getElementById('discount_preview');
-  const totalPreview = document.getElementById('total_preview');
-  const reserved = <?= (int)$reserved_points ?>;
-  function updatePreview() {
-    let points = parseInt(pointsInput.value, 10);
-    if (!Number.isFinite(points) || points < 0) points = 0;
-    points = Math.min(points, parseInt(pointsInput.max, 10) || 0, 150);
-    discountPreview.textContent = '₱' + points.toFixed(2);
-    totalPreview.textContent = '₱' + Math.max(0, 150 - reserved - points).toFixed(2);
-  }
-  pointsInput.addEventListener('input', updatePreview);
-  updatePreview();
-}
+document.addEventListener('DOMContentLoaded', function () {
+    const pointsInput = document.getElementById('points_to_redeem');
+
+    if (pointsInput) {
+        const discountPreview = document.getElementById('discount_preview');
+        const totalPreview = document.getElementById('total_preview');
+        const reserved = <?= (int)$reserved_points ?>;
+
+        function updatePreview() {
+            let points = parseInt(pointsInput.value, 10);
+
+            if (!Number.isFinite(points) || points < 0) {
+                points = 0;
+            }
+
+            points = Math.min(
+                points,
+                parseInt(pointsInput.max, 10) || 0,
+                150
+            );
+
+            discountPreview.textContent = '₱' + points.toFixed(2);
+            totalPreview.textContent = '₱' +
+                Math.max(0, 150 - reserved - points).toFixed(2);
+        }
+
+        pointsInput.addEventListener('input', updatePreview);
+        updatePreview();
+
+        const redemptionForm = pointsInput.closest('form');
+
+        if (redemptionForm) {
+            redemptionForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const points = parseInt(pointsInput.value, 10);
+                const maxPoints = parseInt(pointsInput.max, 10) || 0;
+
+                if (!Number.isInteger(points) || points < 1 || points > maxPoints) {
+                    Swal.fire({
+                        title: 'Invalid Eco Points',
+                        text: 'Please enter a valid number of points to redeem.',
+                        icon: 'warning',
+                        confirmButtonColor: '#17643b'
+                    });
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Confirm Eco Points Redemption?',
+                    html: `
+                        You are about to reserve
+                        <strong>${points} Eco Points</strong>
+                        worth <strong>₱${points.toFixed(2)}</strong>
+                        as a discount for your subscription.
+                        <br><br>
+                        <small>These points will be deducted from your available balance.</small>
+                    `,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#17643b',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, Redeem Points',
+                    cancelButtonText: 'Cancel',
+                    reverseButtons: true
+                }).then(function (result) {
+                    if (result.isConfirmed) {
+                        redemptionForm.submit();
+                    }
+                });
+            });
+        }
+    }
+});
 </script>
+
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
