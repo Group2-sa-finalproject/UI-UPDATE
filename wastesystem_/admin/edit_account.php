@@ -208,7 +208,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="alert alert-danger"><?= editAccountEscape($error) ?></div>
             <?php endif; ?>
 
-            <form method="post" action="edit_account.php?id=<?= (int)$accountId ?>">
+            <form method="post" id="editAccountForm" action="edit_account.php?id=<?= (int)$accountId ?>">
                 <input type="hidden" name="csrf_token" value="<?= editAccountEscape($_SESSION["edit_account_csrf"]) ?>">
                 <input type="hidden" name="account_id" value="<?= (int)$accountId ?>">
 
@@ -246,5 +246,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </section>
 </main>
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const editForm = document.getElementById("editAccountForm");
+
+    if (!editForm) return;
+
+    editForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        Swal.fire({
+            title: "Save Changes?",
+            text: "Are you sure you want to update this account's information?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#198754",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, save changes",
+            cancelButtonText: "Cancel",
+            reverseButtons: true
+        }).then(function (result) {
+            if (result.isConfirmed) {
+                editForm.submit();
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>
