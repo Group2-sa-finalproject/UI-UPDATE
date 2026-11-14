@@ -823,7 +823,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </p>
 
 
-                <form method="POST" action="feedback.php">
+                <form method="POST" action="feedback.php" id="feedbackForm">
 
                     <!-- CSRF TOKEN -->
 
@@ -1002,9 +1002,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 
 
-    <!-- BOOTSTRAP JAVASCRIPT -->
+<!-- SWEETALERT2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- BOOTSTRAP JAVASCRIPT -->
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const feedbackForm = document.getElementById("feedbackForm");
+
+    feedbackForm.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        Swal.fire({
+            title: "Submit Feedback?",
+            text: "Are you sure you want to submit your feedback to the EcoTrack management team?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: "#17643b",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, Submit",
+            cancelButtonText: "Review Again",
+            reverseButtons: true
+        }).then(function (result) {
+
+            if (result.isConfirmed) {
+                feedbackForm.submit();
+            }
+
+        });
+
+    });
+
+});
+</script>
+
 
 </body>
 </html>
