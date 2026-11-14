@@ -1,28 +1,40 @@
 <?php
-session_start();
+// This file is a dashboard module. It is included by admin/dashboard.php.
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../../config/database.php';
 
 // Only administrators may access this page.
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'admin') {
-    header('Location: ../../login.php');
-    exit;
+    // When included by the dashboard, do not redirect after dashboard output.
+    // The parent dashboard is responsible for authentication and navigation.
+    if (!defined('ADMIN_DASHBOARD_MODULE')) {
+        header('Location: ../../login.php');
+        exit;
+    }
 }
 
 if (!isset($conn) || !($conn instanceof mysqli)) {
-    die('Database connection error. Please check config/database.php.');
+    echo '<div class="subscription-page"><div class="alert alert-danger">Database connection error. Please check config/database.php.</div></div>';
+    return;
 }
 
 mysqli_set_charset($conn, 'utf8mb4');
 
-function e($value): string
-{
-    return htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8');
+if (!function_exists('subscriptionAdminEscape')) {
+    function subscriptionAdminEscape($value): string
+    {
+        return htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8');
+    }
 }
 
-function peso($amount): string
-{
-    return '₱' . number_format((float)$amount, 2);
+if (!function_exists('subscriptionAdminPeso')) {
+    function subscriptionAdminPeso($amount): string
+    {
+        return '₱' . number_format((float)$amount, 2);
+    }
 }
 
 if (empty($_SESSION['subscription_admin_csrf'])) {
@@ -51,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $conn->begin_transaction();
 
-            // Lock the subscription row so it cannot be confirmed twice at the same time.
+            // Lock the subscription row so it cannot be confirmed twice simultaneously.
             $lock_stmt = $conn->prepare("
                 SELECT id, total_amount, payment_status, subscription_status
                 FROM subscriptions
@@ -81,8 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($action === 'confirm') {
-                $total_amount = (float)$subscription['total_amount'];
-
                 $update_stmt = $conn->prepare("
                     UPDATE subscriptions
                     SET amount_paid = total_amount,
@@ -109,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $success_message = 'Payment simulation confirmed. The subscription is now active and marked as paid.';
             } else {
-                // Rejection returns the payment to Unpaid. The resident may submit a new notice.
+                // Rejection returns payment to Unpaid. The resident may submit a new notice.
                 $update_stmt = $conn->prepare("
                     UPDATE subscriptions
                     SET payment_status = 'Unpaid'
@@ -139,7 +149,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Rotate the token after a successful state-changing request.
             $_SESSION['subscription_admin_csrf'] = bin2hex(random_bytes(32));
         } catch (Throwable $exception) {
-            $conn->rollback();
+            if ($conn->errno === 0) {
+                // rollback is safe even if the transaction was already rolled back by MySQLi.
+            }
+            try {
+                $conn->rollback();
+            } catch (Throwable $ignored) {
+                // Keep the original error message.
+            }
             $error_message = $exception->getMessage();
         }
     }
@@ -177,7 +194,9 @@ $list_sql = "
 $result = $conn->query($list_sql);
 
 if (!$result) {
-    die('Unable to load subscriptions: ' . e($conn->error));
+    echo '<div class="subscription-page"><div class="alert alert-danger">Unable to load subscriptions: '
+        . subscriptionAdminEscape($conn->error) . '</div></div>';
+    return;
 }
 
 $total_records = $result->num_rows;
@@ -201,50 +220,142 @@ while ($row = $result->fetch_assoc()) {
     }
 }
 ?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Subscriptions | Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="subscription-page">
     <style>
-        body { background: #f5f7f6; }
-        .page-header { background: #198754; color: #fff; border-radius: 12px; }
-        .summary-card { border: 0; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
-        .table thead th { white-space: nowrap; }
-        .table td { vertical-align: middle; }
-        .status-badge { font-size: .78rem; }
-        .action-form { display: inline-block; margin: 2px; }
+        .subscription-page {
+            color: #263b30;
+            width: 100%;
+        }
+
+        .subscription-page .subscription-heading {
+            background: #198754;
+            color: #fff;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 22px;
+        }
+
+        .subscription-page .subscription-heading h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+        }
+
+        .subscription-page .subscription-heading p {
+            margin: 0;
+            opacity: .9;
+            font-size: .92rem;
+        }
+
+        .subscription-page .summary-card {
+            border: 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            height: 100%;
+        }
+
+        .subscription-page .summary-label {
+            color: #6c757d;
+            font-size: .85rem;
+        }
+
+        .subscription-page .summary-number {
+            font-size: 1.8rem;
+            line-height: 1.3;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .subscription-page .subscription-table-card {
+            border: 0;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+            overflow: hidden;
+        }
+
+        .subscription-page .subscription-table-card .card-header {
+            background: #fff;
+            padding: 17px 20px;
+            border-bottom: 1px solid #edf0ed;
+        }
+
+        .subscription-page .table {
+            margin-bottom: 0;
+            font-size: .88rem;
+        }
+
+        .subscription-page .table thead th {
+            white-space: nowrap;
+            font-size: .8rem;
+            color: #315c43;
+            background: #edf6f0;
+            border-bottom: 1px solid #dce9df;
+            padding: 13px 12px;
+        }
+
+        .subscription-page .table td {
+            vertical-align: middle;
+            padding: 13px 12px;
+        }
+
+        .subscription-page .status-badge {
+            font-size: .76rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .subscription-page .action-form {
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .subscription-page .notice-box {
+            border-radius: 9px;
+            font-size: .9rem;
+        }
+
+        .subscription-page .empty-state {
+            color: #6c757d;
+            text-align: center;
+            padding: 48px 15px;
+        }
+
+        @media (max-width: 700px) {
+            .subscription-page .subscription-heading {
+                padding: 19px;
+            }
+
+            .subscription-page .subscription-heading h1 {
+                font-size: 1.25rem;
+            }
+
+            .subscription-page .table {
+                min-width: 1100px;
+            }
+        }
     </style>
-</head>
-<body>
-<div class="container-fluid py-4 px-3 px-lg-4">
-    <div class="page-header p-4 mb-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-            <div>
-                <h1 class="h3 mb-1">Manage Subscriptions and Payments</h1>
-                <p class="mb-0">Review subscription records and confirm simulated cash payment notices.</p>
-            </div>
-            <a href="../dashboard.php" class="btn btn-light">Back to Dashboard</a>
-        </div>
+
+    <div class="subscription-heading">
+        <h1>Manage Subscriptions and Payments</h1>
+        <p>Review subscription records and confirm simulated cash payment notices.</p>
     </div>
 
     <?php if ($success_message !== ''): ?>
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <?= e($success_message) ?>
+            <?= subscriptionAdminEscape($success_message) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
     <?php if ($error_message !== ''): ?>
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <?= e($error_message) ?>
+            <?= subscriptionAdminEscape($error_message) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     <?php endif; ?>
 
-    <div class="alert alert-warning">
+    <div class="alert alert-warning notice-box">
         <strong>School-project simulation:</strong> “Cash Simulation” is only a simulated payment notice.
         This page does not receive or process real money. The administrator must manually verify and confirm each notice.
     </div>
@@ -253,52 +364,55 @@ while ($row = $result->fetch_assoc()) {
         <div class="col-sm-6 col-xl-4">
             <div class="card summary-card">
                 <div class="card-body">
-                    <div class="text-secondary small">All subscription records</div>
-                    <div class="fs-3 fw-bold"><?= number_format($total_records) ?></div>
+                    <div class="summary-label">All subscription records</div>
+                    <div class="summary-number"><?= number_format($total_records) ?></div>
                 </div>
             </div>
         </div>
+
         <div class="col-sm-6 col-xl-4">
             <div class="card summary-card">
                 <div class="card-body">
-                    <div class="text-secondary small">Awaiting payment confirmation</div>
-                    <div class="fs-3 fw-bold text-warning"><?= number_format($pending_confirmations) ?></div>
+                    <div class="summary-label">Awaiting payment confirmation</div>
+                    <div class="summary-number text-warning"><?= number_format($pending_confirmations) ?></div>
                 </div>
             </div>
         </div>
+
         <div class="col-sm-6 col-xl-4">
             <div class="card summary-card">
                 <div class="card-body">
-                    <div class="text-secondary small">Active and paid subscriptions</div>
-                    <div class="fs-3 fw-bold text-success"><?= number_format($active_subscriptions) ?></div>
+                    <div class="summary-label">Active and paid subscriptions</div>
+                    <div class="summary-number text-success"><?= number_format($active_subscriptions) ?></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm">
-        <div class="card-header bg-white py-3">
+    <div class="card subscription-table-card">
+        <div class="card-header">
             <h2 class="h5 mb-0">Subscription Records</h2>
         </div>
-        <div class="card-body">
+
+        <div class="card-body p-0">
             <?php if (count($rows) === 0): ?>
-                <div class="text-center text-secondary py-5">No subscription records found.</div>
+                <div class="empty-state">No subscription records found.</div>
             <?php else: ?>
                 <div class="table-responsive">
                     <table class="table table-hover table-striped align-middle">
-                        <thead class="table-light">
-                        <tr>
-                            <th>Resident</th>
-                            <th>Subscription</th>
-                            <th>Eco Points</th>
-                            <th>Total Due</th>
-                            <th>Amount Paid</th>
-                            <th>Balance</th>
-                            <th>Subscription Status</th>
-                            <th>Payment Status</th>
-                            <th>Date Created</th>
-                            <th style="min-width: 190px;">Administrator Action</th>
-                        </tr>
+                        <thead>
+                            <tr>
+                                <th>Resident</th>
+                                <th>Subscription</th>
+                                <th>Eco Points</th>
+                                <th>Total Due</th>
+                                <th>Amount Paid</th>
+                                <th>Balance</th>
+                                <th>Subscription Status</th>
+                                <th>Payment Status</th>
+                                <th>Date Created</th>
+                                <th style="min-width: 210px;">Administrator Action</th>
+                            </tr>
                         </thead>
                         <tbody>
                         <?php foreach ($rows as $row): ?>
@@ -321,36 +435,41 @@ while ($row = $result->fetch_assoc()) {
                             ?>
                             <tr>
                                 <td>
-                                    <div class="fw-semibold"><?= e($row['fullname']) ?></div>
+                                    <div class="fw-semibold"><?= subscriptionAdminEscape($row['fullname']) ?></div>
                                     <small class="text-secondary">
-                                        <?= e($row['username']) ?> · ID <?= (int)$row['user_id'] ?>
+                                        <?= subscriptionAdminEscape($row['username']) ?> · ID <?= (int)$row['user_id'] ?>
                                     </small>
                                 </td>
                                 <td>
                                     <?= (int)$row['months'] ?> month(s)<br>
-                                    <small class="text-secondary">Fee: <?= peso($row['service_fee']) ?></small>
+                                    <small class="text-secondary">Fee: <?= subscriptionAdminPeso($row['service_fee']) ?></small>
                                 </td>
                                 <td>
                                     <?= number_format((int)$row['points_redeemed']) ?> point(s)<br>
-                                    <small class="text-secondary">Discount: <?= peso($row['discount_amount']) ?></small>
+                                    <small class="text-secondary">Discount: <?= subscriptionAdminPeso($row['discount_amount']) ?></small>
                                 </td>
-                                <td class="fw-semibold"><?= peso($row['total_amount']) ?></td>
-                                <td><?= peso($row['amount_paid']) ?></td>
-                                <td><?= peso($row['balance_due']) ?></td>
+                                <td class="fw-semibold"><?= subscriptionAdminPeso($row['total_amount']) ?></td>
+                                <td><?= subscriptionAdminPeso($row['amount_paid']) ?></td>
+                                <td><?= subscriptionAdminPeso($row['balance_due']) ?></td>
                                 <td>
                                     <span class="badge status-badge <?= $subscription_badge ?>">
-                                        <?= e($subscription_status) ?>
+                                        <?= subscriptionAdminEscape($subscription_status) ?>
                                     </span>
                                 </td>
                                 <td>
                                     <span class="badge status-badge <?= $payment_badge ?>">
-                                        <?= e($payment_status) ?>
+                                        <?= subscriptionAdminEscape($payment_status) ?>
                                     </span>
                                     <?php if ($payment_status === 'Pending Confirmation'): ?>
                                         <div><small class="text-secondary">Cash Simulation</small></div>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= e(date('M d, Y', strtotime($row['created_at']))) ?></td>
+                                <td>
+                                    <?php
+                                        $created_timestamp = strtotime((string)$row['created_at']);
+                                        echo $created_timestamp ? date('M d, Y', $created_timestamp) : '—';
+                                    ?>
+                                </td>
                                 <td>
                                     <?php if (
                                         $payment_status === 'Pending Confirmation' &&
@@ -358,14 +477,15 @@ while ($row = $result->fetch_assoc()) {
                                     ): ?>
                                         <form method="POST" class="action-form"
                                               onsubmit="return confirm('Confirm this simulated cash payment and activate the subscription?');">
-                                            <input type="hidden" name="csrf_token" value="<?= e($_SESSION['subscription_admin_csrf']) ?>">
+                                            <input type="hidden" name="csrf_token" value="<?= subscriptionAdminEscape($_SESSION['subscription_admin_csrf']) ?>">
                                             <input type="hidden" name="subscription_id" value="<?= (int)$row['id'] ?>">
                                             <input type="hidden" name="action" value="confirm">
                                             <button type="submit" class="btn btn-sm btn-success">Confirm Payment</button>
                                         </form>
+
                                         <form method="POST" class="action-form"
                                               onsubmit="return confirm('Reject this payment notice? Its payment status will return to Unpaid.');">
-                                            <input type="hidden" name="csrf_token" value="<?= e($_SESSION['subscription_admin_csrf']) ?>">
+                                            <input type="hidden" name="csrf_token" value="<?= subscriptionAdminEscape($_SESSION['subscription_admin_csrf']) ?>">
                                             <input type="hidden" name="subscription_id" value="<?= (int)$row['id'] ?>">
                                             <input type="hidden" name="action" value="reject">
                                             <button type="submit" class="btn btn-sm btn-outline-danger">Reject</button>
@@ -385,6 +505,3 @@ while ($row = $result->fetch_assoc()) {
         </div>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
