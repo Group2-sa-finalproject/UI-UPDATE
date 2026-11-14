@@ -192,7 +192,7 @@ $totalAccounts = array_sum(array_map("count", $accounts));
                                     <div class="account-actions">
                                         <a class="btn btn-sm btn-outline-success" href="edit_account.php?id=<?= (int)$account["id"] ?>">Edit</a>
                                         <?php if ((int)$account["id"] !== $currentAdminId): ?>
-                                            <form method="post" class="m-0" onsubmit="return confirm('Are you sure you want to delete this account? This action cannot be undone.');">
+                                            <form method="post" class="m-0 delete-account-form">
                                                 <input type="hidden" name="csrf_token" value="<?= accountsPageEscape($_SESSION["accounts_csrf"]) ?>">
                                                 <input type="hidden" name="account_action" value="delete">
                                                 <input type="hidden" name="account_id" value="<?= (int)$account["id"] ?>">
@@ -216,27 +216,65 @@ $totalAccounts = array_sum(array_map("count", $accounts));
     <?php endforeach; ?>
 </div>
 
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 (function () {
     const root = document.querySelector(".accounts-page");
     if (!root) return;
+
+    // ACCOUNT SEARCH
     const searchInput = root.querySelector("#accountSearch");
     const sections = root.querySelectorAll(".account-section");
-    if (!searchInput) return;
 
-    searchInput.addEventListener("input", function () {
-        const term = this.value.toLowerCase().trim();
-        sections.forEach(function (section) {
-            const rows = section.querySelectorAll(".account-row");
-            const empty = section.querySelector(".no-search-results");
-            let visible = 0;
-            rows.forEach(function (row) {
-                const match = row.textContent.toLowerCase().includes(term);
-                row.style.display = match ? "" : "none";
-                if (match) visible++;
+    if (searchInput) {
+        searchInput.addEventListener("input", function () {
+            const term = this.value.toLowerCase().trim();
+
+            sections.forEach(function (section) {
+                const rows = section.querySelectorAll(".account-row");
+                const empty = section.querySelector(".no-search-results");
+                let visible = 0;
+
+                rows.forEach(function (row) {
+                    const match = row.textContent.toLowerCase().includes(term);
+                    row.style.display = match ? "" : "none";
+
+                    if (match) visible++;
+                });
+
+                if (empty) {
+                    empty.style.display =
+                        rows.length > 0 && visible === 0 ? "block" : "none";
+                }
             });
-            if (empty) empty.style.display = rows.length > 0 && visible === 0 ? "block" : "none";
+        });
+    }
+
+    // SWEETALERT DELETE CONFIRMATION
+    root.querySelectorAll(".delete-account-form").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This account will be permanently deleted. This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#dc3545",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, delete it!",
+                cancelButtonText: "Cancel",
+                reverseButtons: true
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    // Submit the form to your existing PHP delete handler.
+                    form.submit();
+                }
+            });
         });
     });
+
 })();
 </script>
