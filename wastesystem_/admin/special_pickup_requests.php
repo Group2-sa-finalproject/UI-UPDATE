@@ -134,7 +134,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 // GET ALL PICKUP REQUESTS
 $requests_result = $conn->query("
     SELECT *
-    FROM special_request_pickup
+    FROM collection_schedules
     ORDER BY id DESC
 ");
 
