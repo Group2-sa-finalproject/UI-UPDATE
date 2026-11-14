@@ -187,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 <nav class="topbar">
     <a href="dashboard.php" class="brand"><i class="bi bi-recycle me-2"></i>EcoTrack Admin</a>
-    <a href="../logout.php" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-right me-1"></i>Logout</a>
+    
 </nav>
 
 <main class="page-wrap">
