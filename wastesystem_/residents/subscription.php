@@ -1568,7 +1568,7 @@ a {
                 <?php endif; ?>
 
 
-                <form method="POST">
+                <form method="POST" class="subscription-confirm-form">
 
                     <input type="hidden"
                            name="csrf_token"
@@ -1866,7 +1866,7 @@ a {
 
                 <?php if ($can_submit_cash_notice): ?>
 
-                    <form method="POST">
+                    <form method="POST" class="cash-payment-confirm-form">
 
                         <input type="hidden"
                                name="csrf_token"
@@ -2138,6 +2138,72 @@ a {
 
 
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // SUBSCRIPTION CONFIRMATION
+    document.querySelectorAll(".subscription-confirm-form").forEach(function(form) {
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Submit Subscription?",
+                text: "Are you sure you want to submit your waste collection subscription application?",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#17643b",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, Submit",
+                cancelButtonText: "Review Again",
+                reverseButtons: true
+            }).then(function(result) {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+
+    // CASH PAYMENT NOTICE CONFIRMATION
+    document.querySelectorAll(".cash-payment-confirm-form").forEach(function(form) {
+
+        form.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            Swal.fire({
+                title: "Submit Cash Payment Notice?",
+                text: "Are you sure you have already made your cash payment and want to notify the administrator for confirmation?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#17643b",
+                cancelButtonColor: "#6c757d",
+                confirmButtonText: "Yes, Submit Notice",
+                cancelButtonText: "Go Back",
+                reverseButtons: true
+            }).then(function(result) {
+
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+
+            });
+
+        });
+
+    });
+
+});
+</script>
