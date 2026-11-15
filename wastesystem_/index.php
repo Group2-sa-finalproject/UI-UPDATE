@@ -252,7 +252,7 @@ if (isset($_POST["login"])) {
                 </span>
 
 
-                <h3>Welcome Back!</h3>
+                <h3>Welcome!</h3>
 
                 <p class="subtitle">
                     Sign in to access your EcoTrack account.
