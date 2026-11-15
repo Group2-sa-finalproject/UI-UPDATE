@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt = $conn->prepare("
                     UPDATE collection_schedules
                     SET status = ?
-                    WHERE id = ? AND status = 'pending'
+                    WHERE id = ? AND LOWER(TRIM(status)) = 'pending'
                 ");
 
                 if ($stmt) {
