@@ -1133,12 +1133,6 @@ if (!empty($routeParams)) {
 
     </section>
 
-    <div class="report-footer">
-        Waste Collection Management System by Group 2
-        &copy; <?= date("Y") ?>
-        <br>
-        Admin Dashboard – Review Sales
-    </div>
 
 </div>
 
