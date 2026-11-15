@@ -397,6 +397,40 @@ if (!empty($routeParams)) {
 
 <style>
 
+.sales-report {
+    font-family: Arial, sans-serif;
+    color: #263b32;
+    width: 100%;
+}
+
+.sales-report h1,
+.sales-report h2,
+.sales-report h3,
+.sales-report h4,
+.sales-report h5,
+.sales-report h6,
+.sales-report p,
+.sales-report label,
+.sales-report input,
+.sales-report select,
+.sales-report button,
+.sales-report table,
+.sales-report span,
+.sales-report div,
+.sales-report a {
+    font-family: inherit;
+}
+
+.sales-report .summary-card,
+.sales-report .summary-card * {
+    font-family: Arial, sans-serif;
+}
+
+.sales-report .report-card,
+.sales-report .report-card * {
+    font-family: Arial, sans-serif;
+}
+
 /* =====================================================
    REVIEW SALES - DESIGN
    ===================================================== */
