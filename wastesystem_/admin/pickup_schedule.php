@@ -637,53 +637,6 @@ foreach ($schedules as $s) {
         </div>
     </section>
 
-    <!-- PENDING REQUESTS -->
-    <section class="schedule-card">
-        <div class="card-heading">
-            <div>
-                <h3 class="section-title"><i class="fas fa-clock"></i> Pending Collection Requests</h3>
-                <p class="section-caption">Review and update residents' pending collection requests.</p>
-            </div>
-            <span class="status-badge status-pending"><?= count($pending_schedules) ?> Pending</span>
-        </div>
-        <div class="table-responsive">
-            <table class="table schedule-table pending-table">
-                <thead><tr><th>Resident</th><th>Username</th><th>Collection Date</th><th>Requested Time</th><th>Address</th><th>Notes</th><th>Status</th><th>Admin Action</th></tr></thead>
-                <tbody>
-                    <?php if ($pending_schedules): ?>
-                        <?php foreach ($pending_schedules as $s): ?>
-                            <tr>
-                                <td class="resident-name"><?= htmlspecialchars($s['fullname'] ?? 'Unknown Resident', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td class="cell-secondary"><?= htmlspecialchars($s['users'] ?? 'N/A', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars(date('F d, Y', strtotime($s['collection_date'])), ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><?= htmlspecialchars($s['requested_time'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td class="address-cell"><?= htmlspecialchars($s['collection_address'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td class="address-cell"><?= htmlspecialchars($s['notes'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
-                                <td><span class="status-badge status-pending">Pending</span></td>
-                                <td>
-                                    <form method="POST" action="dashboard.php?page=pickup_schedule" class="action-form">
-                                        <input type="hidden" name="action" value="update_status">
-                                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
-                                        <input type="hidden" name="schedule_id" value="<?= (int)$s['id'] ?>">
-                                        <select name="status" class="form-select form-select-sm" aria-label="Update request status" required>
-                                            <option value="">Choose Action</option>
-                                            <option value="Approved">Approve</option>
-                                            <option value="Completed">Mark Completed</option>
-                                            <option value="Rejected">Reject</option>
-                                        </select>
-                                        <button type="submit" class="btn btn-action">Update</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr><td colspan="8" class="empty-state"><i class="fas fa-check-circle"></i>No pending collection requests.</td></tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
     <!-- APPROVED REQUESTS -->
     <section class="schedule-card">
         <div class="card-heading">
