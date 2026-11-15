@@ -714,5 +714,5 @@ async function showRegularRoute(routeId) {
 </script>
 
 <script async
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&loading=async&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz8mz80N6FN03Q1q1nQFGeZLduXsZpNHY&loading=async&callback=initMap">
 </script>
