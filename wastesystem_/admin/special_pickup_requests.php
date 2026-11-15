@@ -39,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             ) {
 
                 $stmt = $conn->prepare("
-                    UPDATE special_request_pickup
+                    UPDATE collection_schedules
                     SET status = ?
                     WHERE id = ? AND status = 'pending'
                 ");
@@ -86,9 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if ($request_id > 0) {
 
                 $stmt = $conn->prepare("
-                    DELETE FROM special_request_pickup
-                    WHERE id = ?
-                ");
+             DELETE FROM collection_schedules
+             WHERE id = ?
+            ");
 
                 if ($stmt) {
 
@@ -587,6 +587,7 @@ $requests_result = $conn->query("
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".pickup-action-form").forEach(function (form) {
@@ -594,6 +595,9 @@ document.addEventListener("DOMContentLoaded", function () {
         form.addEventListener("submit", function (event) {
 
             event.preventDefault();
+
+            // Remember which button was clicked
+            const submitter = event.submitter;
 
             const title = form.dataset.title;
             const message = form.dataset.text;
@@ -614,7 +618,20 @@ document.addEventListener("DOMContentLoaded", function () {
             }).then(function (result) {
 
                 if (result.isConfirmed) {
-                    form.submit();
+
+                    // Include the clicked button's name and value
+                    if (submitter && submitter.name) {
+                        const hiddenInput = document.createElement("input");
+
+                        hiddenInput.type = "hidden";
+                        hiddenInput.name = submitter.name;
+                        hiddenInput.value = submitter.value;
+
+                        form.appendChild(hiddenInput);
+                    }
+
+                    // Submit without triggering the confirmation again
+                    HTMLFormElement.prototype.submit.call(form);
                 }
 
             });
@@ -624,4 +641,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
 </script>
