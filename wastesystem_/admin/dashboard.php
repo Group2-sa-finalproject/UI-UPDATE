@@ -167,19 +167,19 @@ $completed_schedules = adminCount($conn, "
 /* Special pickup requests */
 $total_special_requests = adminCount($conn, "
     SELECT COUNT(*) AS total
-    FROM special_request_pickup
+    FROM collection_schedules
 ");
 
 $pending_special_requests = adminCount($conn, "
     SELECT COUNT(*) AS total
-    FROM special_request_pickup
-    WHERE LOWER(status) = 'pending'
+    FROM collection_schedules
+    WHERE LOWER(TRIM(status)) = 'pending'
 ");
 
 $approved_special_requests = adminCount($conn, "
     SELECT COUNT(*) AS total
-    FROM special_request_pickup
-    WHERE LOWER(status) IN ('approved', 'scheduled')
+    FROM collection_schedules
+    WHERE LOWER(TRIM(status)) IN ('approved', 'scheduled')
 ");
 
 /* Collection routes */
