@@ -43,7 +43,15 @@ if (isset($_SESSION["schedule_message"])) {
     unset($_SESSION["schedule_message"]);
 }
 
-// Permanently delete a pending collection request
+// Get selected month
+$month = $_GET["month"] ?? date("Y-m");
+
+if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
+    $month = date("Y-m");
+}
+
+
+// Cancel a pending collection request
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["cancel_request"])) {
 
     $request_id = (int) ($_POST["request_id"] ?? 0);
@@ -53,13 +61,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["cancel_request"])) {
         !is_string($csrf_token) ||
         !hash_equals($_SESSION["schedule_csrf"], $csrf_token)
     ) {
-        $message = "Invalid request. Please refresh the page and try again.";
-        $message_type = "error";
+        $_SESSION["schedule_message"] = "Invalid request. Please refresh the page and try again.";
 
     } elseif ($request_id <= 0) {
 
-        $message = "Invalid collection request.";
-        $message_type = "error";
+        $_SESSION["schedule_message"] = "Invalid collection request.";
 
     } else {
 
@@ -82,34 +88,27 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["cancel_request"])) {
             $user_id
         );
 
-        if (!mysqli_stmt_execute($delete_stmt)) {
+        if (mysqli_stmt_execute($delete_stmt)) {
 
-            die("Delete execution failed: " . mysqli_stmt_error($delete_stmt));
-
-        } elseif (mysqli_stmt_affected_rows($delete_stmt) > 0) {
-
-            $_SESSION["schedule_message"] = "Collection request successfully deleted.";
-
-            header("Location: collection_schedule.php?month=" . urlencode($month));
-            exit;
+            if (mysqli_stmt_affected_rows($delete_stmt) > 0) {
+                $_SESSION["schedule_message"] = "Collection request successfully cancelled.";
+            } else {
+                $_SESSION["schedule_message"] = "Unable to cancel. The request may no longer be pending.";
+            }
 
         } else {
-
-            $message = "No record was deleted. Please check the request ID, resident ID, and request status.";
-            $message_type = "error";
+            die("Delete execution failed: " . mysqli_stmt_error($delete_stmt));
         }
 
         mysqli_stmt_close($delete_stmt);
     }
+
+    header("Location: collection_schedule.php?month=" . urlencode($month));
+    exit;
 }
 
 
-// Get selected month
-$month = $_GET["month"] ?? date("Y-m");
 
-if (!preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $month)) {
-    $month = date("Y-m");
-}
 
 $first_day = new DateTime($month . "-01");
 $last_day = clone $first_day;
@@ -1297,6 +1296,7 @@ function selectDate(date) {
 <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
 document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".cancel-request-form").forEach(function(form) {
@@ -1304,6 +1304,8 @@ document.addEventListener("DOMContentLoaded", function () {
         form.addEventListener("submit", function(event) {
 
             event.preventDefault();
+
+            const submitter = event.submitter;
 
             Swal.fire({
                 title: "Cancel Collection Request?",
@@ -1318,7 +1320,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }).then(function(result) {
 
                 if (result.isConfirmed) {
-                    form.submit();
+
+                    if (submitter && submitter.name) {
+                        const hiddenInput = document.createElement("input");
+
+                        hiddenInput.type = "hidden";
+                        hiddenInput.name = submitter.name;
+                        hiddenInput.value = submitter.value;
+
+                        form.appendChild(hiddenInput);
+                    }
+
+                    HTMLFormElement.prototype.submit.call(form);
                 }
 
             });
@@ -1328,6 +1341,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+
 </script>
 
 </body>
