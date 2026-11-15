@@ -1217,7 +1217,7 @@ document.getElementById("household-form")
 
 <!-- Replace YOUR_GOOGLE_MAPS_API_KEY with your configured key -->
 <script
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz8mz80N6FN03Q1q1nQFGeZLduXsZpNHY&callback=initMap"
     async
     defer>
 </script>
