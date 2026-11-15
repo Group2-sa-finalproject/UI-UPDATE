@@ -551,57 +551,127 @@ $history_count = $history_result->num_rows;
     color: #263b30;
 }
 
-.subscriptions-module .page-header {
-    background: linear-gradient(135deg, #146c43, #198754);
-    color: white;
-    border-radius: 15px;
-    padding: 27px;
-    box-shadow: 0 4px 15px rgba(25,135,84,.13);
+.subscriptions-module .page-heading {
+    margin-bottom: 25px;
 }
 
-.subscriptions-module .page-header p {
-    color: rgba(255,255,255,.85);
+.subscriptions-module .page-heading h2 {
+    color: #173e2b;
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0 0 7px;
+}
+
+.subscriptions-module .page-heading p {
+    color: #829087;
     font-size: 13px;
+    line-height: 1.6;
+    margin: 0;
 }
 
-.subscriptions-module .summary-card {
-    border: 1px solid #edf1ee;
-    border-radius: 13px;
-    background: white;
-    box-shadow: 0 3px 12px rgba(0,0,0,.04);
-    height: 100%;
+
+/* =====================================================
+   SUMMARY CARDS - MATCH DASHBOARD OVERVIEW DESIGN
+   ===================================================== */
+
+.subscriptions-module .dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.subscriptions-module .dashboard-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e7eee9;
+    border-radius: 12px;
+    padding: 19px;
+    box-shadow: 0 3px 12px rgba(30, 70, 45, .03);
     transition: .2s ease;
 }
 
-.subscriptions-module .summary-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0,0,0,.07);
+.subscriptions-module .dashboard-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(30, 70, 45, .07);
 }
 
-.subscriptions-module .summary-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+.subscriptions-module .card-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 21px;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    font-size: 17px;
+    background: #eaf5ed;
+    color: #25804a;
 }
 
-.subscriptions-module .icon-green {
-    background: #e4f4eb;
-    color: #198754;
+.subscriptions-module .card-icon.yellow {
+    background: #fff0ee;
+    color: #d35b4f;
 }
 
-.subscriptions-module .icon-yellow {
-    background: #fff4d6;
-    color: #b78103;
+.subscriptions-module .card-icon.blue {
+    background: #eaf3ff;
+    color: #397bc3;
 }
 
-.subscriptions-module .icon-blue {
-    background: #e5efff;
-    color: #2764b5;
+.subscriptions-module .card-label {
+    color: #7a897f;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
 }
+
+.subscriptions-module .card-value {
+    color: #183e2c;
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+@media (max-width: 1100px) {
+    .subscriptions-module .dashboard-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767px) {
+    .subscriptions-module .page-heading h2 {
+        font-size: 21px;
+    }
+
+    .subscriptions-module .dashboard-cards {
+        gap: 10px;
+    }
+
+    .subscriptions-module .dashboard-card {
+        padding: 14px;
+    }
+
+    .subscriptions-module .card-value {
+        font-size: 23px;
+    }
+
+    .subscriptions-module .card-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .subscriptions-module .dashboard-cards {
+        grid-template-columns: 1fr;
+    }
+}
+
 
 .subscriptions-module .content-card {
     border: 1px solid #edf1ee;
@@ -879,9 +949,6 @@ $history_count = $history_result->num_rows;
 }
 
 @media (max-width: 768px) {
-    .subscriptions-module .page-header {
-        padding: 20px;
-    }
 
     .subscriptions-module .filter-panel {
         padding: 15px;
@@ -908,20 +975,21 @@ $history_count = $history_result->num_rows;
 
 <div class="subscriptions-module">
 
-    <!-- PAGE HEADER -->
 
-    <div class="page-header mb-4">
+    <!-- PAGE HEADING -->
 
-        <h2 class="h3 fw-bold mb-2">
-            <i class="bi bi-wallet2 me-2"></i>
+    <div class="page-heading overview-heading">
+
+        <h2>
             Manage Subscriptions and Payments
         </h2>
 
-        <p class="mb-0">
+        <p>
             Review resident subscriptions, verify payment notices, and manage payment records.
         </p>
 
     </div>
+
 
     <!-- ALERTS -->
 
@@ -957,95 +1025,73 @@ $history_count = $history_result->num_rows;
         This page does not receive or process real money. The administrator must manually verify and confirm each notice.
     </div>
 
+    
     <!-- SUMMARY CARDS -->
 
-    <div class="row g-3 mb-4">
+    <div class="dashboard-cards">
 
-        <div class="col-sm-6 col-xl-4">
+        <!-- TOTAL SUBSCRIPTIONS -->
 
-            <div class="summary-card">
-                <div class="card-body p-4">
+        <div class="dashboard-card">
 
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-                            <div class="text-secondary small mb-1">
-                                All Subscription Records
-                            </div>
-
-                            <div class="fs-3 fw-bold">
-                                <?= number_format($total_records) ?>
-                            </div>
-                        </div>
-
-                        <div class="summary-icon icon-green">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-
-                    </div>
-
+            <div>
+                <div class="card-label">
+                    All Subscription Records
                 </div>
+
+                <div class="card-value">
+                    <?= number_format($total_records) ?>
+                </div>
+            </div>
+
+            <div class="card-icon">
+                <i class="bi bi-people-fill"></i>
             </div>
 
         </div>
 
-        <div class="col-sm-6 col-xl-4">
+        <!-- PENDING CONFIRMATIONS -->
 
-            <div class="summary-card">
-                <div class="card-body p-4">
+        <div class="dashboard-card">
 
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-                            <div class="text-secondary small mb-1">
-                                Awaiting Payment Confirmation
-                            </div>
-
-                            <div class="fs-3 fw-bold text-warning">
-                                <?= number_format($pending_confirmations) ?>
-                            </div>
-                        </div>
-
-                        <div class="summary-icon icon-yellow">
-                            <i class="bi bi-hourglass-split"></i>
-                        </div>
-
-                    </div>
-
+            <div>
+                <div class="card-label">
+                    Awaiting Payment Confirmation
                 </div>
+
+                <div class="card-value">
+                    <?= number_format($pending_confirmations) ?>
+                </div>
+            </div>
+
+            <div class="card-icon yellow">
+                <i class="bi bi-hourglass-split"></i>
             </div>
 
         </div>
 
-        <div class="col-sm-6 col-xl-4">
+        <!-- ACTIVE SUBSCRIPTIONS -->
 
-            <div class="summary-card">
-                <div class="card-body p-4">
+        <div class="dashboard-card">
 
-                    <div class="d-flex justify-content-between align-items-center">
-
-                        <div>
-                            <div class="text-secondary small mb-1">
-                                Active and Paid Subscriptions
-                            </div>
-
-                            <div class="fs-3 fw-bold text-success">
-                                <?= number_format($active_subscriptions) ?>
-                            </div>
-                        </div>
-
-                        <div class="summary-icon icon-blue">
-                            <i class="bi bi-check-circle-fill"></i>
-                        </div>
-
-                    </div>
-
+            <div>
+                <div class="card-label">
+                    Active and Paid Subscriptions
                 </div>
+
+                <div class="card-value">
+                    <?= number_format($active_subscriptions) ?>
+                </div>
+            </div>
+
+            <div class="card-icon blue">
+                <i class="bi bi-check-circle-fill"></i>
             </div>
 
         </div>
 
     </div>
+
 
     <!-- SUBSCRIPTION RECORDS -->
 
