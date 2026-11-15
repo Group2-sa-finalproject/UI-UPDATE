@@ -110,20 +110,220 @@ while ($row = $result->fetch_assoc()) {
 }
 $result->free();
 
+// ACCOUNT SUMMARY COUNTS
 $totalAccounts = array_sum(array_map("count", $accounts));
+$totalAdmins = count($accounts["admin"]);
+$totalCollectors = count($accounts["collector"]);
+$totalResidents = count($accounts["residents"]);
 ?>
 
 <style>
 .accounts-page{width:100%;color:#263b30}.accounts-page *{box-sizing:border-box}
-.accounts-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:24px}
-.accounts-header h1{font-size:25px;font-weight:700;color:#183e2c;margin:0 0 6px}
-.accounts-header p{color:#78877e;font-size:13px;margin:0}
 .add-account-btn{display:inline-flex;align-items:center;justify-content:center;background:#238653;color:#fff;padding:11px 18px;min-height:42px;border-radius:8px;font-size:13px;font-weight:600;text-decoration:none;transition:.2s}
 .add-account-btn:hover{background:#176b40;color:#fff;transform:translateY(-1px)}
 .accounts-toolbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
-.accounts-summary{flex:0 0 220px;background:#fff;border:1px solid #e7eee9;border-radius:12px;padding:17px 20px;box-shadow:0 2px 8px rgba(30,70,45,.03)}
-.accounts-summary span{display:block;color:#78877e;font-size:12px;margin-bottom:6px}
-.accounts-summary h2{color:#1b4430;font-size:27px;font-weight:700;margin:0}
+
+/* ==========================================
+   PAGE HEADING - DASHBOARD STYLE
+   ========================================== */
+
+.accounts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 25px;
+}
+
+.accounts-header h2 {
+    color: #173e2b;
+    font-size: 25px;
+    font-weight: 700;
+    font-family: inherit;
+    margin: 0 0 7px;
+}
+
+.accounts-header p {
+    color: #829087;
+    font-size: 13px;
+    font-weight: 400;
+    font-family: inherit;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ==========================================
+   ACCOUNT SUMMARY CARDS
+   ========================================== */
+
+.accounts-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 24px;
+}
+
+.accounts-stat-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: #fff;
+    border: 1px solid #e7eee9;
+    border-radius: 12px;
+    padding: 19px;
+    box-shadow: 0 3px 12px rgba(30, 70, 45, .03);
+    transition: .2s ease;
+}
+
+.accounts-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px rgba(30, 70, 45, .07);
+}
+
+.accounts-stat-label {
+    color: #7a897f;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.accounts-stat-value {
+    color: #183e2c;
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.accounts-stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    font-size: 17px;
+    background: #eaf5ed;
+    color: #25804a;
+}
+
+.accounts-stat-icon.admin {
+    background: #eaf5ed;
+    color: #25804a;
+}
+
+.accounts-stat-icon.collector {
+    background: #eaf3ff;
+    color: #397bc3;
+}
+
+.accounts-stat-icon.resident {
+    background: #fff0ee;
+    color: #d35b4f;
+}
+
+/* ==========================================
+   SEARCH TOOLBAR
+   ========================================== */
+
+.accounts-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.account-search {
+    flex: 1 1 260px;
+    max-width: 420px;
+}
+
+.account-search label {
+    display: block;
+    color: #52645a;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.account-search input {
+    width: 100%;
+    height: 43px;
+    padding: 0 14px;
+    border: 1px solid #dce6df;
+    border-radius: 8px;
+    background: #fff;
+    color: #263b30;
+    font-size: 13px;
+    outline: none;
+}
+
+.account-search input:focus {
+    border-color: #238653;
+    box-shadow: 0 0 0 3px rgba(35,134,83,.1);
+}
+
+/* ==========================================
+   RESPONSIVE SUMMARY CARDS
+   ========================================== */
+
+@media (max-width: 1100px) {
+    .accounts-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .accounts-header {
+        align-items: stretch;
+    }
+
+    .accounts-header h2 {
+        font-size: 22px;
+    }
+
+    .add-account-btn {
+        width: 100%;
+    }
+
+    .accounts-stats {
+        gap: 10px;
+    }
+
+    .accounts-stat-card {
+        padding: 14px;
+    }
+
+    .accounts-stat-value {
+        font-size: 23px;
+    }
+
+    .accounts-stat-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+
+    .accounts-toolbar {
+        align-items: stretch;
+    }
+
+    .account-search {
+        flex: 1 1 100%;
+        max-width: none;
+    }
+}
+
+@media (max-width: 400px) {
+    .accounts-stats {
+        grid-template-columns: 1fr;
+    }
+}
+
 .account-search{flex:1 1 260px;max-width:420px}
 .account-search label{display:block;color:#52645a;font-size:12px;font-weight:600;margin-bottom:7px}
 .account-search input{width:100%;height:43px;padding:0 14px;border:1px solid #dce6df;border-radius:8px;background:#fff;color:#263b30;font-size:13px;outline:none}
@@ -145,13 +345,24 @@ $totalAccounts = array_sum(array_map("count", $accounts));
 </style>
 
 <div class="accounts-page">
+    
+    <!-- PAGE HEADING -->
+
     <div class="accounts-header">
         <div>
-            <h1>Manage Accounts</h1>
-            <p>View, edit, and manage all registered accounts in the system.</p>
+            <h2>Manage Accounts</h2>
+
+            <p>
+                View, edit, and manage all registered accounts in the system.
+            </p>
         </div>
-        <a href="add_account.php" class="add-account-btn">+ Add New Account</a>
+
+        <a href="add_account.php" class="add-account-btn">
+            <i class="fas fa-user-plus me-1"></i>
+            Add New Account
+        </a>
     </div>
+
 
     <?php if ($accountNotice !== ""): ?>
         <div class="alert alert-<?= accountsPageEscape($accountNoticeType) ?> alert-dismissible fade show" role="alert">
@@ -160,14 +371,73 @@ $totalAccounts = array_sum(array_map("count", $accounts));
         </div>
     <?php endif; ?>
 
-    <div class="accounts-toolbar">
-        <div class="accounts-summary">
-            <span>Total Registered Accounts</span>
-            <h2><?= number_format($totalAccounts) ?></h2>
+    <!-- ACCOUNT SUMMARY CARDS -->
+    <div class="accounts-stats">
+
+        <!-- TOTAL ACCOUNTS -->
+        <div class="accounts-stat-card">
+            <div>
+                <div class="accounts-stat-label">Total Accounts</div>
+                <div class="accounts-stat-value">
+                    <?= number_format($totalAccounts) ?>
+                </div>
+            </div>
+            <div class="accounts-stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
         </div>
+
+        <!-- ADMINISTRATORS -->
+        <div class="accounts-stat-card">
+            <div>
+                <div class="accounts-stat-label">Administrators</div>
+                <div class="accounts-stat-value">
+                    <?= number_format($totalAdmins) ?>
+                </div>
+            </div>
+            <div class="accounts-stat-icon admin">
+                <i class="fas fa-user-shield"></i>
+            </div>
+        </div>
+
+        <!-- GARBAGE COLLECTORS -->
+        <div class="accounts-stat-card">
+            <div>
+                <div class="accounts-stat-label">Garbage Collectors</div>
+                <div class="accounts-stat-value">
+                    <?= number_format($totalCollectors) ?>
+                </div>
+            </div>
+            <div class="accounts-stat-icon collector">
+                <i class="fas fa-truck"></i>
+            </div>
+        </div>
+
+        <!-- RESIDENTS -->
+        <div class="accounts-stat-card">
+            <div>
+                <div class="accounts-stat-label">Residents</div>
+                <div class="accounts-stat-value">
+                    <?= number_format($totalResidents) ?>
+                </div>
+            </div>
+            <div class="accounts-stat-icon resident">
+                <i class="fas fa-house-user"></i>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SEARCH TOOLBAR -->
+    <div class="accounts-toolbar">
         <div class="account-search">
-            <label for="accountSearch">Search accounts</label>
-            <input type="search" id="accountSearch" placeholder="Search by ID, name, username, or account type..." autocomplete="off">
+            <label for="accountSearch">Search Accounts</label>
+            <input
+                type="search"
+                id="accountSearch"
+                placeholder="Search by ID, name, username, or account type..."
+                autocomplete="off"
+            >
         </div>
     </div>
 
